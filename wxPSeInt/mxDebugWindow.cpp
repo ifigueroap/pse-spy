@@ -1,0 +1,256 @@
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/scrolbar.h>
+#include "mxDebugWindow.h"
+#include "mxStatusBar.h"
+#include "ids.h"
+#include "DebugManager.h"
+#include "mxMainWindow.h"
+#include "ConfigManager.h"
+#include "mxProcess.h"
+#include "mxHelpWindow.h"
+#include "mxDesktopTestPanel.h"
+#include "mxEvaluateDialog.h"
+#include "mxSubtitles.h"
+
+mxDebugWindow *debug_panel=NULL;
+
+BEGIN_EVENT_TABLE(mxDebugWindow,wxPanel)
+	EVT_BUTTON(mxID_DEBUG_BUTTON, mxDebugWindow::OnDebugButton)
+	EVT_BUTTON(mxID_DEBUG_PAUSE, mxDebugWindow::OnDebugPause)
+	EVT_BUTTON(mxID_DEBUG_STEP, mxDebugWindow::OnDebugStep)
+	EVT_BUTTON(mxID_DEBUG_HELP, mxDebugWindow::OnDebugHelp)
+	EVT_BUTTON(mxID_DEBUG_EVALUATE, mxDebugWindow::OnDebugEvaluate)
+	EVT_CHECKBOX(mxID_DEBUG_DESKTOP_VARS, mxDebugWindow::OnDebugDesktopTest)
+	EVT_CHECKBOX(mxID_DEBUG_STEP_IN, mxDebugWindow::OnDebugCheckStepIn)
+	EVT_CHECKBOX(mxID_DEBUG_SUBTITLES, mxDebugWindow::OnDebugCheckSubtitles)
+END_EVENT_TABLE()	
+
+mxDebugWindow::mxDebugWindow(wxWindow *parent):wxPanel(parent,wxID_ANY) {
+	evaluate_window=NULL;
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->AddSpacer(5);
+//	sizer->Add(new wxStaticText(this,wxID_ANY,_T(" Estado:")),wxSizerFlags().Proportion(0).Expand().Border(wxTOP,10));
+//	debug_status = new wxStaticText(this,wxID_ANY,_T("No iniciada"),wxDefaultPosition,wxDefaultSize,wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
+//	sizer->Add(debug_status,wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10));
+	sizer->Add(dp_button_run = new wxButton(this,mxID_DEBUG_BUTTON,_T("Comenzar")),wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10));
+	sizer->Add(dp_button_pause = new wxButton(this,mxID_DEBUG_PAUSE,_T("Pausar/Continuar")),wxSizerFlags().Proportion(0).Expand());
+	sizer->Add(dp_button_step = new wxButton(this,mxID_DEBUG_STEP,_T("Primer Paso")),wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10));
+	sizer->Add(dp_button_evaluate = new wxButton(this,mxID_DEBUG_EVALUATE,_T("Evaluar...")),wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10));
+	dp_button_evaluate->SetToolTip(utils->FixTooltip("Puede utilizar este botón para evaluar una expresión o conocer el valor de una variable durante la ejecución paso a paso. Para ello debe primero pausar el algoritmo."));
+	sizer->Add(new wxStaticText(this,wxID_ANY,_T(" Velocidad:")),wxSizerFlags().Proportion(0).Expand().Border(wxTOP,10));
+	debug_speed=new wxScrollBar(this,mxID_DEBUG_SLIDER);
+	debug_speed->SetScrollbar(0,1,100,10);
+	debug_speed->SetToolTip(utils->FixTooltip("Con este slider puede variar la velocidad con la que avanza automáticamente la ejecución paso a paso."));
+	debug_speed->SetThumbPosition(config->stepstep_tspeed);
+	sizer->Add(debug_speed,wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10));
+	dp_check_step_in=new wxCheckBox(this,mxID_DEBUG_STEP_IN,"Entrar en subprocesos");
+	dp_check_step_in->SetToolTip(utils->FixTooltip("Cuando esta opción está activada y el proceso llega a la llamada de una función entra en dicha función y muestra pasa a paso cómo se ejecuta la misma, mientras que si está desactivada ejecuta la llamada completa en un solo paso sin mostrar la ejecución de la misma."));
+	dp_check_step_in->SetValue(true);
+	if (!config->lang[LS_ENABLE_USER_FUNCTIONS]) dp_check_step_in->Hide();
+	sizer->Add(dp_check_step_in,wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10)); 
+	
+//	sizer->AddSpacer(20);
+	sizer->Add(dp_check_desktop_test = new wxCheckBox(this,mxID_DEBUG_DESKTOP_VARS,_T("Prueba de Escritorio")),wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10));
+	dp_check_desktop_test->SetToolTip(utils->FixTooltip("Con esta opción puede configurar una tabla con un conjunto de variables o expresiones para que serán evaluadas en cada paso de la ejecución paso a paso y registradas en dicha tabla automáticamente para analizar luego la evolución de los datos y el algoritmo."));
+#ifdef __WIN32__
+	dp_check_subtitles=new wxCheckBox(this,mxID_DEBUG_SUBTITLES,"Explicar en detalle c/paso");
+#else
+	dp_check_subtitles=new wxCheckBox(this,mxID_DEBUG_SUBTITLES,"Explicar con detalle\ncada paso");
+#endif
+	dp_check_subtitles->SetToolTip(utils->FixTooltip("Haga click en \"Comenzar\" para iniciar la ejecución paso a paso y leer en este panel los detalles de cada acción que realiza el intérprete."));
+	dp_check_subtitles->SetValue(false);
+	sizer->Add(dp_check_subtitles,wxSizerFlags().Proportion(0).Expand().Border(wxBOTTOM,10)); 
+	sizer->Add(new wxButton(this,mxID_DEBUG_HELP,_T("Ayuda...")),wxSizerFlags().Proportion(0).Expand().Border(wxTOP,10));
+	SetState(DS_STOPPED);
+	this->SetSizerAndFit(sizer);
+	evaluate_window = new mxEvaluateDialog(parent);
+}
+
+void mxDebugWindow::SetSpeed(int speed) {
+	debug_speed->SetThumbPosition(config->stepstep_tspeed=speed);
+}
+
+void mxDebugWindow::SetState(ds_enum state) {
+	switch (state) {
+	case DS_STARTING:
+		dp_button_run->SetLabel(_T("Finalizar"));
+		dp_button_run->SetToolTip(utils->FixTooltip("Utilice este botón para detener definitivamente la ejecución del algoritmo y abandonar el modo de ejecución paso a paso."));
+		subtitles->text->SetValue("Haga click en \"Continuar\" para leer en este panel los detalles las próximas acciones que realize el intérprete.");
+//		debug_status->SetLabel(_T("Iniciando"));
+		dp_button_step->Disable();
+		dp_button_step->SetLabel(_T("Avanzar un Paso"));
+		dp_button_step->SetToolTip(utils->FixTooltip("Utilice este botón para avanzar ejecutar solamente la siguiente instrucción del algoritmo."));
+		subtitles->button_next->Disable();
+		subtitles->button_next->SetLabel("Continuar");
+		dp_check_desktop_test->Disable();
+		desktop_test_panel->SetEditable(false);
+		break;
+	case DS_STOPPED: 
+		subtitles->button_next->SetLabel(_T("Comenzar"));
+		subtitles->text->SetValue("Haga click en \"Comenzar\" para iniciar la ejecución paso a paso y leer en este panel los detalles de cada acción que realiza el intérprete.");
+		subtitles->button_next->Enable();
+		dp_button_run->SetLabel(_T("Comenzar"));
+		dp_button_run->SetToolTip(utils->FixTooltip("Utilice este botón para que el algoritmo comience a ejecutarse automáticamente y paso a paso, señalando cada instrucción que ejecuta, según la velocidad definida en el menú configuración."));
+		dp_button_step->SetLabel(_T("Primer Paso"));
+		dp_button_step->SetToolTip(utils->FixTooltip("Utilice este botón para ejecutar solo la primer instrucción del algoritmo y pausar inmediatamente la ejecución del mismo."));
+		dp_button_step->Enable();
+		dp_check_desktop_test->Enable();
+		if (desktop_test_panel) desktop_test_panel->SetEditable(true);
+		dp_button_evaluate->Disable();
+		dp_button_step->Enable();
+		dp_button_pause->Disable();
+		if (debug&&debug->source) if (ds_state!=DS_FINALIZED) debug->source->SetStatus(STATUS_DEBUG_STOPPED);
+//		debug_status->SetLabel(_T("No Iniciada"));
+		break;
+	case DS_FINALIZED:
+		subtitles->button_next->SetLabel(_T("Cerrar"));
+		subtitles->button_next->Enable();
+		dp_button_run->SetLabel(_T("Cerrar"));
+		dp_button_run->SetToolTip(utils->FixTooltip("Ha finalizado la ejecución del algoritmo. Utilice este botón para cerrar la ventana de la ejecución del mismo."));
+		dp_button_pause->Disable();
+		dp_button_step->Disable();
+		if (debug&&debug->source) debug->source->SetStatus(STATUS_DEBUG_ENDED);
+		break;
+	case DS_PAUSED:
+		dp_button_step->Enable();
+		subtitles->button_next->Enable();
+		dp_button_pause->Enable();
+		dp_button_pause->SetLabel(_T("Continuar"));
+		dp_button_pause->SetToolTip(utils->FixTooltip("Utilice este botón para que el algoritmo continúe avanzando paso a paso automáticamente."));
+		dp_button_evaluate->Enable();
+		if (debug&&debug->source) debug->source->SetStatus(STATUS_DEBUG_PAUSED);
+		break;
+	case DS_RESUMED:
+		dp_button_step->Disable();
+		subtitles->button_next->Disable();
+		dp_button_pause->Enable();
+		dp_button_pause->SetLabel(_T("Pausar"));
+		dp_button_pause->SetToolTip(utils->FixTooltip("Utilice este botón para detener temporalmente la ejecución del algoritmo. Al detener el algoritmo puede observar el valor de las variables con el botón Evaluar."));
+		dp_button_evaluate->Disable();
+		if (debug&&debug->source) debug->source->SetStatus(STATUS_DEBUG_RUNNING);
+		break;
+	case DS_STEP:
+		dp_button_pause->Disable();
+		dp_button_evaluate->Disable();
+		dp_button_step->Disable();
+		subtitles->button_next->Disable();
+		if (debug&&debug->source) debug->source->SetStatus(STATUS_DEBUG_RUNNING);
+		break;
+	default:
+		break;
+	}
+	ds_state = state;
+	if (evaluate_window && evaluate_window->IsShown()) evaluate_window->Evaluate();
+}
+
+void mxDebugWindow::OnDebugButton(wxCommandEvent &evt) {
+	if (debug->debugging)
+		debug->Stop();
+	else
+		DebugStartFromGui(true);
+}
+
+void mxDebugWindow::DebugStartFromGui(bool from_psdraw) {
+	mxSource *src=main_window->GetCurrentSource();
+	if (!src) return;
+	main_window->ReorganizeForDebugging();
+	if (!from_psdraw && src->GetFlowSocket()) {
+		src->GetFlowSocket()->Write("send debug\n",11);
+		return;
+	}
+	
+//	if (evaluate_window->IsShown()) evaluate_window->Hide();
+//	if (evaluate_window->IsShown()) evaluate_window->Evaluate();
+//	if (debug->debugging) {
+//		debug->Stop();
+//	} else {
+//		mxSource *src=main_window->GetCurrentSource();
+		if (src) StartDebugging(src,false);
+//	}
+}
+
+void mxDebugWindow::OnDebugPause(wxCommandEvent &evt) {
+//	if (evaluate_window->IsShown()) evaluate_window->Hide();
+//	if (evaluate_window->IsShown()) evaluate_window->Evaluate();
+	if (ds_state==DS_STEP) return;
+	debug->Pause();
+}
+
+void mxDebugWindow::OnDebugStep(wxCommandEvent &evt) {
+//	if (evaluate_window->IsShown()) evaluate_window->Hide();
+	if (evaluate_window->IsShown()) evaluate_window->Evaluate();
+	if (ds_state==DS_STEP) return;
+	if (debug->debugging) {
+		debug->Step();
+	} else {
+		main_window->ReorganizeForDebugging();
+		mxSource *src=main_window->GetCurrentSource();
+		if (src) StartDebugging(src,true);
+	}
+}
+
+void mxDebugWindow::StartDebugging(mxSource *source, bool paused) {
+	wxString fname = source->SaveTemp();
+	debug->should_pause = paused;
+	if ( (new mxProcess(source))->Debug(fname, true) )
+		SetState(DS_STARTING);
+}
+
+void mxDebugWindow::OnDebugHelp(wxCommandEvent &evt) {
+	if (!helpw) helpw = new mxHelpWindow();
+	helpw->ShowHelp(_T("debug.html"));
+}
+
+void mxDebugWindow::OnDebugDesktopTest(wxCommandEvent &evt) {
+	main_window->ShowDesktopTestPanel(dp_check_desktop_test->GetValue(),true);
+}
+void mxDebugWindow::OnDebugEvaluate(wxCommandEvent &evt) {
+	evaluate_window->Show();
+}
+
+void mxDebugWindow::SetEvaluationValue (wxString val, char tipo) {
+	evaluate_window->SetEvaluationValue(val,tipo);
+}
+
+void mxDebugWindow::ProfileChanged ( ) {
+	dp_check_step_in->Show(config->lang[LS_ENABLE_USER_FUNCTIONS]);
+	Layout();
+}
+
+void mxDebugWindow::OnDebugCheckStepIn(wxCommandEvent &evt) {
+	evt.Skip();
+	debug->SetStepIn(dp_check_step_in->GetValue());
+}
+
+void mxDebugWindow::OnDebugCheckSubtitles(wxCommandEvent &evt) {
+	evt.Skip();
+	debug->SetSubtitles(dp_check_subtitles->GetValue());
+	main_window->ShowSubtitles(dp_check_subtitles->GetValue(),true);
+}
+
+void mxDebugWindow::ShowInEvaluateDialog(wxString s) {
+	evaluate_window->Show();
+	evaluate_window->EvaluateExpression(s);
+}
+
+void mxDebugWindow::SetSubtitles(bool on) {
+	dp_check_subtitles->SetValue(on);
+	wxCommandEvent evt;
+	OnDebugCheckSubtitles(evt);
+	debug->SetSubtitles(true);
+}
+
+ds_enum mxDebugWindow::GetState ( ) {
+	return ds_state;
+}
+
+void mxDebugWindow::OnDesktopTestPanelHide ( ) {
+	dp_check_desktop_test->SetValue(false);
+}
+
+bool mxDebugWindow::IsDesktopTestEnabled ( ) {
+	return dp_check_desktop_test->GetValue();
+}
+

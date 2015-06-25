@@ -1,0 +1,11 @@
+PROCESO SIN_TITULO
+DEFINIR A COMO ENTERO;
+A<-(1);
+B<-(2.5);
+C<-(VERDADERO);
+D<-(FALSO);
+E<-('Hola');
+F<-('Hola Mundo');
+LEER P;
+ESCRIBIR P;
+FINPROCESO
