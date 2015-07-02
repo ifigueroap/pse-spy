@@ -8,16 +8,18 @@
 #include "ConfigManager.h"
 #include <iostream>
 #include "Estructurador.h"
-#include "ListaEventos.h"
 #include <windows.h>
 LoggerDaniel *loggerDaniel=NULL;
-Estructurador estructuraDatos("C:\\datos.xml");
+Estructurador estructuraDatos;
+wxString finEjecucion;
+int sintaxisCorrecta=0;
+int valor=0;
+int valor2=0;
+bool ejecucionCorrecta;//Variables para manejo de funcionalidades de registro de resultados
 //----------------------------------REGISTRAR CODIGO DEL ARCHIVO----------------------------------
 void LoggerDaniel::RegCode(wxString codigo){//Registrar código
     estructuraDatos.setCodigo(codigo);
-    file<<"<Codigo>\n"<<codigo<<"\n</Codigo>"<<endl;
 }
-
 //----------------------------------REGISTRAR MODIFICAR ARCHIVO----------------------------------
 
 void LoggerDaniel::RegCreateFile(){
@@ -57,13 +59,12 @@ void LoggerDaniel::RegVeriSyntax(wxString nombreArchivo){
 void LoggerDaniel::RegResultSyntax(wxString error,wxString textoConError){
     wxString lineaError;
     if(error=="NO"){//NO encuentra errores de sintaxis
-        sintaxisCorrecta=TRUE;//Permite que se registren errores de ejecución
+        sintaxisCorrecta=1;//Permite que se registren errores de ejecución
         estructuraDatos.setErrorSintaxis("NO","0","0");
         RegNumErrorSyntax(0);
-        file<<"ErrorSintaxis:\t"<<error<<"\t"<<endl;
     }
     else{
-        sintaxisCorrecta=FALSE;//Hay errores de sintaxis, no se puede ejecutar
+        sintaxisCorrecta=0;//Hay errores de sintaxis, no se puede ejecutar
         error.Remove(6,20);//Quita texto basura del string
         lineaError=error.substr(3,3);//Entrega la linea errada
         error.Remove(0,6);//ahora error entrega la descripcion del error encontrado
@@ -72,7 +73,6 @@ void LoggerDaniel::RegResultSyntax(wxString error,wxString textoConError){
             textoConError.Remove(textoConError.Length()-2,textoConError.length());
         }
         estructuraDatos.setErrorSintaxis(lineaError,error,textoConError);
-        file<<"Error de sintaxis:\tLinea:\t"<<lineaError<<"\nError:\t"<<error<<"\n"<<"InstruccionErrada:\t"<<textoConError<<"\t"<<endl;
     }
 }
 void LoggerDaniel::RegNumErrorSyntax(int numErrores){
@@ -82,29 +82,28 @@ void LoggerDaniel::RegNumErrorSyntax(int numErrores){
     if(numErrores!=0){
         estructuraDatos.setNumErrorSintaxis(numErrores);
     }
-    file<<"Numero errores de sintaxis:\t"<<numErrores<<"\t"<<endl;
 }
 void LoggerDaniel::RegResultEjec(wxString errorEjecucion, int num){
-    if(sintaxisCorrecta){//Sólo recibe errores de EJECUCION
+    if(sintaxisCorrecta==1){//Sólo recibe errores de EJECUCION
         if(num==1){
             valor=1;
             errorEjecucion.Remove(0,11);//Quita texto basura del string
             finEjecucion.clear();
             finEjecucion<<"\t\t\t\t<ErrorEncontrado>\n"
-            "\t\t\t\t\t<NombreError>ErrorEjecucion</NombreError>\n"
+            "\t\t\t\t\t<TipoError>ErrorEjecucion</TipoError>\n"
             "\t\t\t\t\t<DescripcionError>"+errorEjecucion+"</DescripcionError>\n"
             "\t\t\t\t</ErrorEncontrado>\n"
-            "\t\t\t\t<NumErrorEjecucion>1</NumErrorEjecucion>\n"
+            "\t\t\t\t<NumErrores>1</NumErrores>\n"
             "\t\t\t</Procesar>\n"
             "\t\t</EventoRegistrado>\n";
         }
         if(num==0){
-            if(this->ejecucionCorrecta==true){
+            if(ejecucionCorrecta==true){
                 finEjecucion.clear();
                 finEjecucion<<"\t\t\t</Procesar>\n"
                     "\t\t</EventoRegistrado>\n";                
             }
-            this->ejecucionCorrecta=true;
+            ejecucionCorrecta=true;
         }
         if(num==2){
             if(valor==1){
@@ -115,7 +114,6 @@ void LoggerDaniel::RegResultEjec(wxString errorEjecucion, int num){
                 estructuraDatos.setErrorEjecucion(finEjecucion);
             }
         }
-        file<<"ErrorEjecucion\t"<<errorEjecucion<<"\t"<<endl;
     }
 }
 
@@ -183,54 +181,22 @@ void LoggerDaniel::RegFindPrev(wxString textoBuscado){
     estructuraDatos.setFindPrev("BuscarAnterior",textoBuscado);
 }
 
-void LoggerDaniel::configRecolector(){
-    ifstream config;
-    string direccion;
-    int linea=1,numStack;
-    config.open("C:\\Users\\Danielillo\\Documents\\pseint\\bin\\configRecolector.txt");
-    if(!config){
-        wxMessageBox("No se ha podido abrir el archivo de configuración de registro");
-    }else{
-        while(!config.eof()) {
-        if(linea==1){
-            config>>direccion;
-        }
-        if (linea==2){
-            config>>numStack;
-        }
-        linea++;
-   }
-    }
-}
-
-
-string LoggerDaniel::getPath() {
-    char buffer[MAX_PATH];
-    GetModuleFileName( NULL, buffer, MAX_PATH );
-    string::size_type pos = string( buffer ).find_last_of( "\\/" );
-    return string( buffer ).substr( 0, pos);
-}
 
 //Funcion para cerrar tag XML "sin errores fuera de ejecucion"
 void LoggerDaniel::closeTagXml(){
-    estructuraDatos.cerrarTag();
+    estructuraDatos.terminarTags();
 }
 
 
 //CONSTRUCTOR
-LoggerDaniel::LoggerDaniel(const char *where) {        
-    file.open(where,ios::app);
-    if (file.is_open())loggerDaniel=this; else wxMessageBox(wxString("No se pudo abrir el archivo de log: ")<<where);
-    sintaxisCorrecta=FALSE;//Se utiliza para manejar cuándo aparecen los errores de ejecucion(solo cuando hay sintaxis correcta)
+LoggerDaniel::LoggerDaniel(){
+    sintaxisCorrecta=0;//Se utiliza para manejar cuándo aparecen los errores de ejecucion(solo cuando hay sintaxis correcta)
     ejecucionCorrecta=true;
     valor=valor2=0;
-    configRecolector();
 }
 
 //DESTRUCTOR
 LoggerDaniel::~LoggerDaniel() {
-    estructuraDatos.terminarTags();
-    file.close();
 }
 
 

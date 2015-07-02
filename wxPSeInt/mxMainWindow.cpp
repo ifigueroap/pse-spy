@@ -237,7 +237,7 @@ mxMainWindow::~mxMainWindow() {
 	RTSyntaxManager::Stop();
 	aui_manager.UnInit();
 	if (logger) delete logger;
-        if (loggerDaniel) delete loggerDaniel;
+        loggerDaniel->closeTagXml();
 }
 
 void mxMainWindow::CreateMenus() {
@@ -719,6 +719,7 @@ void mxMainWindow::OnRunRun(wxCommandEvent &evt) {
 void mxMainWindow::RunCurrent(bool raise, bool from_psdraw) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source=CURRENT_SOURCE;
+                loggerDaniel->RegCode(source->GetText());
                 if (source->sin_titulo){
                     loggerDaniel->RegRunSource("Sin titulo");
                 }
@@ -745,6 +746,7 @@ void mxMainWindow::RunCurrent(bool raise, bool from_psdraw) {
 void mxMainWindow::OnRunStepStep(wxCommandEvent &evt) {
     IF_THERE_IS_SOURCE {
 		mxSource *source=CURRENT_SOURCE;
+                loggerDaniel->RegCode(source->GetText());
                 if (source->sin_titulo){
                     loggerDaniel->RegRunStepStep("Sin titulo");
                 }
@@ -763,6 +765,7 @@ void mxMainWindow::OnRunSubtitles(wxCommandEvent &evt) {
 void mxMainWindow::OnRunCheck(wxCommandEvent &evt) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source = CURRENT_SOURCE;
+                loggerDaniel->RegCode(source->GetText());
 		wxString fname=source->SaveTemp();
                 if (source->sin_titulo){
                     loggerDaniel->RegVeriSyntax("Sin titulo");
@@ -807,17 +810,21 @@ void mxMainWindow::OnClose(wxCloseEvent &evt) {
 	IF_THERE_IS_SOURCE {
 		for (int i=notebook->GetPageCount()-1;i>=0;i--) {
 			mxSource *source = (mxSource*)(notebook->GetPage(i));
+                        loggerDaniel->RegCode(source->GetText());
 			if (source->GetModify()) {
 				notebook->SetSelection(i);
 				int res=wxMessageBox(_Z("Hay cambios sin guardar. ¿Desea guardarlos antes de salir?"), source->filename, wxYES_NO|wxCANCEL,this);
 				if (res&wxYES) {
-					if (!source->sin_titulo)
-						source->SaveFile(source->filename);
-					else {
-						wxCommandEvent evt;
-						OnFileSaveAs(evt);
-						if (source->GetModify())
-							return;
+					if (!source->sin_titulo){
+                                            source->SaveFile(source->filename);
+                                            loggerDaniel->RegCode(source->GetText());
+                                        }
+					else{
+                                            loggerDaniel->RegCode(source->GetText());
+                                            wxCommandEvent evt;
+                                            OnFileSaveAs(evt);
+                                            if (source->GetModify())
+                                                    return;
 					}
 				}
 				if (res&wxCANCEL) {
@@ -1526,6 +1533,7 @@ void mxMainWindow::OnRunSetInput (wxCommandEvent & evt) {
 void mxMainWindow::OnFileEditFlow (wxCommandEvent & evt) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source = CURRENT_SOURCE;
+                loggerDaniel->RegCode(source->GetText());
                 if (source->sin_titulo){
                     loggerDaniel->RegCreateDraw("Sin titulo");
                 }

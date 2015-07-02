@@ -45,8 +45,7 @@ bool mxApplication::OnInit() {
 	utils = new mxUtils;
         
 	if (argc==3 && wxString(argv[1])=="--logger") new Logger(argv[2]);
-	const char *direccionXML="C:\\archivo.txt";
-        new LoggerDaniel(direccionXML);
+        new LoggerDaniel;
 	wxFileName f_path = wxGetCwd(); 
 	f_path.MakeAbsolute();
 	wxString cmd_path = f_path.GetFullPath();

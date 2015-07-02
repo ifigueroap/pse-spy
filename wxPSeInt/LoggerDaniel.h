@@ -6,13 +6,8 @@
 using namespace std;
 class LoggerDaniel {
 private:
-    ofstream file;
-    wxString finEjecucion;
 protected:
-public:
-    bool sintaxisCorrecta,ejecucionCorrecta;//Variables para manejo de funcionalidades de registro de resultados
-    LoggerDaniel(const char *where);
-    int valor,valor2;
+public:    
 //Registrar codigo del archivo
     void RegCode(wxString codigo);
 //Gestionar archivos ----------------------------------
@@ -49,10 +44,9 @@ public:
     void RegFindPrev(wxString textoBuscado);
     
     
-    string getPath();
-    void configRecolector();
     void closeTagXml();
     bool getVerificarSintaxis();
+    LoggerDaniel();
     ~LoggerDaniel();
 };
 

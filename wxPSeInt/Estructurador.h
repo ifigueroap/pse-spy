@@ -3,15 +3,11 @@
 #include <iostream>
 #include <wx/String.h>
 #include <fstream>
-#include "Evento.h"
-#include "ListaEventos.h"
 using namespace std;
 class Estructurador {//SETEAR DATOS A XML
 private:
-    bool mostrado;
-    string codigo, lineaError, textoConError, lineaErrada, descripcionError;
+    string codigo;
     ofstream archivoXML;
-    int numErrores,lineaActual;
     wxString evento;
 public:
 //Funciones a utilizar en las clases evento y lista.
@@ -29,11 +25,7 @@ public:
     void setSaveFileAs(wxString nombreArchivo);
     
 //PROCESAR ARCHIVO
-    void setLineaError(wxString lineaErrada,wxString descripcionError, wxString textoConError);
-    string getLineaError();
-    string getNombreArchivo();
-    string getTextoConError();
-    string getDescripcionError();
+
     void setRunSource(wxString nombreArchivo);
     void setErrorSintaxis(wxString lineaError,wxString descripcionError,wxString textoError);
     void setNumErrorSintaxis(int numError);
@@ -65,9 +57,8 @@ public:
     void setFindText(wxString nombreAccion, wxString textoBuscado);
     void setFindNext(wxString nombreAccion, wxString textoBuscado);
     void setFindPrev(wxString nombreAccion, wxString textoBuscado);
-    void startReg();
     void terminarTags();
-    Estructurador(const char *ubicacion);
+    Estructurador();
     Estructurador(const Estructurador& orig);
     virtual ~Estructurador();
     
