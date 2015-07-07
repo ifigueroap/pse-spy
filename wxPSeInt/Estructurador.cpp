@@ -426,7 +426,7 @@ Estructurador::Estructurador() {
     std::cout<<userDataDir<<std::endl;
     path.AssignDir(userDataDir); 
     path.AppendDir("PseSpy");
-    if (! path.DirExists()) {
+    if (!path.DirExists()) {
         path.Mkdir();
         std::cout<<"Se crea"<<std::endl;
     } else {
