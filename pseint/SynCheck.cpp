@@ -946,7 +946,7 @@ int SynCheck(int linea_from, int linea_to) {
 							str.erase(tmp1,str.size()-tmp1);
 							str.erase(0,tmp3);
 							if (str.find("(",0)==string::npos){ 
-								if (!ignore_logic_errors) { SynError (58,"Faltan subindices."); errores++; }
+								if (!ignore_logic_errors) { SynError (58,"Faltan subindices al declarar el arreglo"); errores++; }
 								if (!CheckVariable(str,59)) errores++;
 								else if (!memoria->EstaDefinida(str)) memoria->DefinirTipo(str,vt_desconocido); // para que aparezca en la lista de variables
 							} else {
@@ -1347,7 +1347,7 @@ int SynCheck(int linea_from, int linea_to) {
 			}
 			if (instruccion=="Error?" && cadena!="" && cadena!=";") {
 				if (LeftCompare(cadena,"FIN "))
-				{SynError (99,"Instrucción no válida."); errores++;}
+				{SynError (99,"Instrucción no valida."); errores++;}
 				else
 					{SynError (106,"Instrucción no valida."); errores++;}
 			}
