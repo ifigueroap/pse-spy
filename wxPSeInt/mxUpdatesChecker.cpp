@@ -62,7 +62,7 @@ mxUpdatesChecker::mxUpdatesChecker(bool show) : wxDialog(main_window, wxID_ANY, 
 		close_button->SetFocus();
 		wxYield();
 	}
-//	CheckNow();
+	CheckNow();
 }
 
 void mxUpdatesChecker::CheckNow() {
