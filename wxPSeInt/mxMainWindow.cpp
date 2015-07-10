@@ -261,7 +261,7 @@ void mxMainWindow::CreateMenus() {
 		utils->AddItemToMenu( export_menu,id, _ZZ("Convertir a ")+utils->GetExportLangName(id)+"...","",wxString("exp_")+utils->GetExportLangCode(id)+".png");
 	
 	export_menu->AppendSeparator();
-	utils->AddItemToMenu(export_menu,mxID_FILE_EXPORT_HTML, _Z("Pseudocódigo coloreado (html)..."),"","html.png");
+	utils->AddItemToMenu(export_menu,mxID_FILE_EXPORT_HTML, _Z("Pseudocï¿½digo coloreado (html)..."),"","html.png");
 	utils->AddItemToMenu(export_menu,mxID_FILE_EXPORT_PNG, _Z("Diagrama de flujo (png, bmp o jpg)..."),"","edit_flow.png");
 	file->AppendSubMenu(export_menu,_Z("Exportar"),"");
 	
@@ -302,12 +302,12 @@ void mxMainWindow::CreateMenus() {
 	wxMenu *cfg_help = new wxMenu;
 	mi_autocomp = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_AUTOCOMP, _Z("Utilizar Autocompletado"),"",config->autocomp);
 	mi_autoclose = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_AUTOCLOSE, _Z("Cerrar Repetitivas/Condicionales"),"",config->autoclose);
-	mi_highlight_blocks = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_HIGHLIGHT_BLOCKS, _Z("Resaltar bloques lógicos"),"",config->highlight_blocks);
+	mi_highlight_blocks = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_HIGHLIGHT_BLOCKS, _Z("Resaltar bloques lï¿½gicos"),"",config->highlight_blocks);
 	mi_calltip_helps = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_CALLTIP_HELPS, _Z("Utilizar Ayudas Emergentes"),"",config->calltip_helps);
 	mi_smart_indent = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SMART_INDENT, _Z("Utilizar Indentado Inteligente"),"",config->smart_indent);
 	mi_rt_syntax = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_RT_SYNTAX, _Z("Comprobar Sintaxis Mientras Escribe"),"",config->rt_syntax);
 	mi_quickhelp = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SHOW_QUICKHELP, _Z("Mostrar Ayuda Rapida"),"",config->auto_quickhelp);
-//	cfg->AppendSubMenu(cfg_help,_Z("Asistencias"));
+	cfg->AppendSubMenu(cfg_help,_Z("Asistencias"));
 	
 	wxMenu *cfg_pres = new wxMenu;
 	mi_animate_gui = utils->AddCheckToMenu(cfg_pres,mxID_CONFIG_ANIMATE_GUI, _Z("Animar paneles"),"",config->animate_gui);
@@ -318,7 +318,7 @@ void mxMainWindow::CreateMenus() {
 	mi_use_psterm = utils->AddCheckToMenu(cfg_pres,mxID_CONFIG_USE_PSTERM, _Z("Ejecutar en una terminal del sistema"),"",!config->use_psterm);
 	mi_use_dark_psterm = utils->AddCheckToMenu(cfg_pres,mxID_CONFIG_USE_DARK_PSTERM, _Z("Utilizar fondo negro en la terminal"),"",config->use_dark_psterm);
 	mi_use_dark_psterm->Enable(config->use_psterm);
-	cfg->AppendSubMenu(cfg_pres,_Z("Presentacion"));
+	cfg->AppendSubMenu(cfg_pres,_Z("Presentaciï¿½n"));
 	
 	utils->AddItemToMenu(cfg,mxID_CONFIG_LANGUAGE, _Z("Opciones del Lenguaje (perfiles)..."),"","lenguaje.png");
 	mi_nassi_schne = utils->AddCheckToMenu(cfg,mxID_CONFIG_NASSI_SCHNEIDERMAN, _Z("Utilizar diagramas Nassi-Schneiderman"),"",config->lang[LS_USE_NASSI_SCHNEIDERMAN]);
@@ -331,7 +331,7 @@ void mxMainWindow::CreateMenus() {
 	wxMenu *run = new wxMenu;
 	utils->AddItemToMenu(run,mxID_RUN_RUN, _Z("Ejecutar\tF9"),"","ejecutar.png");
 	utils->AddItemToMenu(run,mxID_RUN_STEP_STEP, _Z("Ejecutar Paso a Paso\tF5"),"","pasos.png");
-	utils->AddItemToMenu(run,mxID_RUN_SUBTITLES, _Z("Ejecucion Explicada"),"","subtitles.png");
+	utils->AddItemToMenu(run,mxID_RUN_SUBTITLES, _Z("Ejecuciï¿½n Explicada"),"","subtitles.png");
 	utils->AddItemToMenu(run,mxID_RUN_CHECK, _Z("Verificar Sintaxis\tShift+F9"),"","verificar.png");
 //	utils->AddItemToMenu(run,mxID_RUN_DRAW_FLOW, _Z("Dibujar Diagrama de Flujo"),"","flujo.png");
 	utils->AddItemToMenu(run,mxID_RUN_SET_INPUT, _Z("Predefinir Entrada...\tCtrl+F9"),"","input.png");
@@ -558,6 +558,11 @@ void mxMainWindow::OnFileClose(wxCommandEvent &evt) {
                 if (source->sin_titulo){
 //                    loggerDaniel->RegCloseFile("Sin titulo");
                 }
+                else{
+//                    wxMessageBox(_ZZ(source->filename));
+//-------------------------------------------------------------------------------------------------------------------
+//                    loggerDaniel->RegCloseFile(source->filename);
+                }
 		if (source->GetModify()) {
                     
 			int res=wxMessageBox(_Z("Hay cambios sin guardar. Desea guardarlos antes de cerrar?"), source->filename, wxYES_NO|wxCANCEL,this);
@@ -658,6 +663,7 @@ mxSource *mxMainWindow::OpenProgram(wxString path, bool is_example) {
         if (is_example) source->SetExample();
 	if (config->rt_syntax) source->DoRealTimeSyntax();
 	source->SetStatus(STATUS_NEW_SOURCE);
+//      wxMessageBox(_ZZ(source->GetText() ));
 	return source;
 }
 
