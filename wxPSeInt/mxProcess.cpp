@@ -47,7 +47,7 @@ static void CheckDeps(wxString cmd) {
 	}
 	wxString msg;
 	msg<<"Puede que su sistema no tenga todas las bibliotecas necesarias para ejecutar PSeInt.\n";
-	msg<<"Instale las bibliotecas faltantes con el gestor de paquetes de su distribuci�n.\n";
+	msg<<"Instale las bibliotecas faltantes con el gestor de paquetes de su distribucion.\n";
 	msg<<"Las bibliotecas faltantes son:\n";
 	_LOG("mxProcess::CheckDeps ends missing deps");
 	for(unsigned int i=0;i<ofin.GetCount();i++) {
@@ -142,7 +142,7 @@ bool mxProcess::CheckSyntax(wxString file, wxString extra_args) {
                 }
 		if (source) source->SetStatus(STATUS_SYNTAX_CHECK_ERROR);
 		main_window->RTreeAdd("",3);
-		main_window->RTreeAdd("Las lineas con errores se marcan con una cruz sobre el margen izquierdo. Seleccione un error para ver su descripci�n:",3);
+		main_window->RTreeAdd("Las lineas con errores se marcan con una cruz sobre el margen izquierdo. Seleccione un error para ver su descripcion:",3);
 		main_window->RTreeDone(true,true);
 		proc_for_killing = this;
 	} else {

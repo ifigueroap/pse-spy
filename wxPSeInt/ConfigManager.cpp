@@ -56,9 +56,9 @@ void ConfigManager::LoadDefaults() {
 	show_toolbar = true;
 	autocomp = true;
 	highlight_blocks = true;
-	autoclose = true;
-	calltip_helps = true;
-	auto_quickhelp = true;
+	autoclose = false;
+	calltip_helps = false;
+	auto_quickhelp = false;
 	size_x = size_y = 0;
 	images_path = "imgs";
 	font_size = 10;
@@ -66,12 +66,12 @@ void ConfigManager::LoadDefaults() {
 	stepstep_tspeed=50;
 	debug_port=55374;
 	comm_port=55375;
-	use_dark_psterm = false;
+	use_dark_psterm = true;
 	use_psterm = true;
-	check_for_updates = true;
+	check_for_updates = false;
 	fixed_port = false;
-	rt_syntax = true;
-	smart_indent = true;
+	rt_syntax = false;
+	smart_indent = false;
 	last_dir=wxFileName::GetHomeDir();
 #if defined(_WIN32) || defined(__WIN32__)
 	pseint_command = "pseint.exe";

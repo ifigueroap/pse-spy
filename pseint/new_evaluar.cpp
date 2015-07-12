@@ -354,14 +354,14 @@ string Evaluar(const string &expresion, int &p1, int &p2, tipo_var &tipo) {
 			if (pm==string::npos) { // si es una variable comun
 				string nombre = expresion.substr(p1,p2-p1+1);
 				if (PalabraReservada(nombre) || nombre==main_process_name) {
-					WriteError(285,string("Identificador no valido (")+nombre+")");
+					WriteError(285,string("Identificador no valido."));
 					tipo=vt_error;
 					ev_return("");
 				}
 				const Funcion *func=EsFuncion(nombre);
 				if (func) {
 					if (func->cant_arg!=0) {
-						WriteError(286,string("Faltan parametros para la funcion (")+nombre+")");
+						WriteError(286,string("Faltan parametros para la funcion "));
 						tipo=vt_error;
 						ev_return("");
 					} else {
@@ -369,18 +369,18 @@ string Evaluar(const string &expresion, int &p1, int &p2, tipo_var &tipo) {
 					}
 				}
 				if (memoria->LeerDims(nombre)) { // usar leertipo trae problemas cuando la variable es un alias a un elemento de un arreglo
-					WriteError(220,string("Faltan subindices para el arreglo (")+nombre+")");
+					WriteError(220,string("Faltan subindices para el arreglo."));
 					tipo=vt_error;
 					ev_return("");
 				}
 				tipo = memoria->LeerTipo(nombre);
 				if (lang[LS_FORCE_DEFINE_VARS] && Inter.Running() && !memoria->EstaDefinida(nombre)) {
-					WriteError(210,string("Variable no definida (")+nombre+")");
+					WriteError(210,string("Variable no definida."));
 					tipo=vt_error;
 					ev_return("");
 				}
 				if ((lang[LS_FORCE_INIT_VARS] || Inter.EvaluatingForDebug()) && Inter.Running() && !memoria->EstaInicializada(nombre)) {
-					WriteError(215,string("Variable no inicializada (")+nombre+")");
+					WriteError(215,string("Variable no inicializada "));
 					tipo=vt_error;
 					ev_return("");
 				}
@@ -392,19 +392,19 @@ string Evaluar(const string &expresion, int &p1, int &p2, tipo_var &tipo) {
 					ev_return(EvaluarFuncion(func,expresion.substr(pm,p2-pm+1),tipo));
 				} else {
 					if (PalabraReservada(nombre)) {
-						WriteError(287,string("Identificador no valido (")+nombre+")");
+						WriteError(287,string("Identificador no valido."));
 						tipo=vt_error;
 						ev_return("");
 					}
 					if (lang[LS_FORCE_DEFINE_VARS] && Inter.Running() && !memoria->EstaDefinida(nombre)) {
-						WriteError(209,string("Variable no definida (")+nombre+")");
+						WriteError(209,string("Variable no definida."));
 						tipo=vt_error;
 						ev_return("");
 					}
 					string aux=expresion.substr(p1,p2-p1+1);
 					if (CheckDims(aux)) {
 						if (lang[LS_FORCE_INIT_VARS] && Inter.Running() && !memoria->EstaInicializada(aux)) {
-							WriteError(288,string("Posición no inicializada (")+aux+")");
+							WriteError(288,string("Posición no inicializada."));
 							tipo=vt_error;
 							ev_return("");
 						}
@@ -696,7 +696,7 @@ bool CheckDims(string &str) {
 		int *dims=new int[ca+1]; for(int i=0;i<ca;i++) dims[i+1]=0; dims[0]=ca;
 		memoria->AgregarArreglo(nombre,dims);
 #endif
-		WriteError(202,string("El identificador ")+str.substr(0,pp)+(" no corresponde a un arreglo o subproceso")); /// @todo: ver que hacer cuando se llama desde psexport, porque genera errores falsos
+		WriteError(202,string("El identificador no corresponde a un arreglo o subproceso")); /// @todo: ver que hacer cuando se llama desde psexport, porque genera errores falsos
 		return false;
 	}
 	if (!Inter.Running()) {
@@ -715,7 +715,7 @@ bool CheckDims(string &str) {
 		}
 		// controlar cantidad de dimensiones
 		if (adims[0]!=ca) {
-			WriteError(299,string("Cantidad de indices incorrecta para el arreglo (")+nombre+(")"));
+			WriteError(299,string("Cantidad de indices incorrecta para el arreglo."));
 			return false;
 		}
 		
@@ -746,7 +746,7 @@ bool CheckDims(string &str) {
 	
 	int b=pp,ca=1; while ((b=BuscarComa(str,b+1,p2))>0) ca++;
 	if (adims[0]!=ca) {
-		WriteError(300,string("Cantidad de indices incorrecta para el arreglo (")+nombre+(")"));
+		WriteError(300,string("Cantidad de indices incorrecta para el arreglo."));
 		return false;
 	}
 	nombre+="(";
@@ -757,18 +757,18 @@ bool CheckDims(string &str) {
 		string ret = Evaluar(str,pp,np,t);
 		if (!t.is_ok()) return false;
 		if (ret.find(".",0)!=string::npos) {
-			WriteError(301,string("Subindice no entero ("+ret+")"));
+			WriteError(301,string("Subindice no entero ("")"));
 			return false;
 		}
 		int idx=atoi(ret.c_str());
 		if (lang[LS_BASE_ZERO_ARRAYS]) {
 			if (idx<0||idx>adims[i+1]-1) {
-				WriteError(302,string("Subindice (")+ret+") fuera de rango (0..."+IntToStr(adims[i+1]-1)+")");
+				WriteError(302,string("Subindice ("") fuera de rango (0..n"));
 				return false;
 			}
 		} else {
 			if (idx<1||idx>adims[i+1]) {
-				WriteError(303,string("Subindice (")+ret+") fuera de rango (1..."+IntToStr(adims[i+1])+")");
+				WriteError(303,string("Subindice ("") fuera de rango (0..n"));
 				return false;
 			}
 		}

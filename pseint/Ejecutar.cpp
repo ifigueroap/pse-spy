@@ -120,17 +120,17 @@ void Ejecutar(int LineStart, int LineEnd) {
 					tmp2-=aux2.size();
 
 					if (lang[LS_FORCE_DEFINE_VARS] && !memoria->EstaDefinida(aux2)) {
-						ExeError(208,"Variable no definida ("+aux2+").");
+						ExeError(208,"Variable no definida.");
 					}
 					tipo=memoria->LeerTipo(aux2);
 					const int *dims=memoria->LeerDims(aux2);
 					size_t pp=aux2.find("(");
 					if (dims && pp==string::npos)
-						ExeError(200,"Faltan subindices para el arreglo ("+aux2+").");
+						ExeError(200,"Faltan subindices para el arreglo.");
 					else if (!dims && pp!=string::npos)
-						ExeError(201,"La variable ("+aux2.substr(0,pp)+") no es un arreglo.");
+						ExeError(201,"La variable no es un arreglo.");
 					if (dims) {
-						_sub(line,string("Se alizan las dimensiones de ")+aux2);
+						_sub(line,string("Se alizan las dimensiones de "));
 						CheckDims(aux2);
 						_sub(line,string("El resultado es ")+aux2);
 					}
@@ -294,7 +294,7 @@ void Ejecutar(int LineStart, int LineEnd) {
 				// verificar indices si es arreglo
 				if (memoria->LeerDims(aux1)) {
 					if (aux1.find("(",0)==string::npos)
-						ExeError(200,"Faltan subindices para el arreglo ("+aux1+").");
+						ExeError(200,"Faltan subindices para el arreglo.");
 					else
 						CheckDims(aux1);
 				} else if (aux1.find("(",0)!=string::npos) {
@@ -533,7 +533,7 @@ void Ejecutar(int LineStart, int LineEnd) {
 					elemento=aux2+"("+elemento.substr(1);
 					// asignar el elemento en la variable del bucle
 					if (primer_iteracion) primer_iteracion=false; else { _pos(line); }
-					_sub(line,aux1+" será equivalente a "+elemento+" en esta iteración.");
+					_sub(line,aux1+" sera equivalente a "+elemento+" en esta iteración.");
 					if (!memoria->DefinirTipo(aux1,memoria->LeerTipo(elemento)))
 						ExeError(277,"No coinciden los tipos.");
 					memoria->EscribirValor(aux1,memoria->LeerValor(elemento));
@@ -554,7 +554,7 @@ void Ejecutar(int LineStart, int LineEnd) {
 				cadena.erase(0,6); cadena.erase(cadena.size()-6,6); // Cortar la variable
 				tipo_var tipo_master=vt_caracter_o_numerica;
 				_pos(line);
-				_sub(line,string("Se evalúa la expresion: ")+cadena);
+				_sub(line,string("Se evalua la expresion: ")+cadena);
 				Evaluar(aux2=cadena,tipo,tipo_master); // evaluar para verificar el tipo
 				if (!tipo.cb_num&&(lang[LS_INTEGER_ONLY_SWITCH]||!tipo.cb_car)) {
 					if (!lang[LS_INTEGER_ONLY_SWITCH]) 
@@ -619,7 +619,7 @@ void Ejecutar(int LineStart, int LineEnd) {
 				}
 				line=fin+1;
 				_pos(line);
-				_sub(line,"Se sale de la estructura Segun.	");
+				_sub(line,"Se sale de la estructura Segun.");
 			}
 		}
 	}

@@ -91,7 +91,7 @@ void LoggerDaniel::RegResultEjec(wxString errorEjecucion, int num){
             finEjecucion.clear();
             finEjecucion<<"\t\t\t\t<ErrorEncontrado>\n"
             "\t\t\t\t\t<TipoError>ErrorEjecucion</TipoError>\n"
-            "\t\t\t\t\t<DescripcionError>"+errorEjecucion+"</DescripcionError>\n"
+            "\t\t\t\t\t<DescripcionErrorEj><![CDATA["+errorEjecucion+"]]></DescripcionErrorEj>\n"
             "\t\t\t\t</ErrorEncontrado>\n"
             "\t\t\t\t<NumErrores>1</NumErrores>\n"
             "\t\t\t</Procesar>\n"
