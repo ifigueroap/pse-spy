@@ -424,17 +424,22 @@ Estructurador::Estructurador() {
     wxFileName path;
     wxString userDataDir = wxStandardPaths::Get().GetUserConfigDir();
     std::cout<<userDataDir<<std::endl;
-    path.AssignDir(userDataDir); 
+    path.AssignDir(userDataDir);
     path.AppendDir("PseSpy");
-    if (!path.DirExists()) {
+    if (!path.DirExists()){
         path.Mkdir();
         std::cout<<"Se crea"<<std::endl;
     } else {
         std::cout<<"Ya existe"<<std::endl;
     }
-    path.SetName("PseSpy-"+getFechaName());
+    string nombreArchivo;
+    nombreArchivo=getFechaName();
+    path.SetName("PseSpy-"+nombreArchivo+".xml");
     colaEv = new ColaEventos(path.GetFullPath().mb_str());
+    path.SetName("RepositorioXML.txt");
+    std::cout<<path.GetFullPath();
     colaEv->iniciarTagXml();
+    colaEv->setRepositorioXML(path.GetFullPath().mb_str(),nombreArchivo);
 }
 Estructurador::Estructurador(const Estructurador& orig) {
 }

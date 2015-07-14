@@ -103,7 +103,7 @@ void LoggerDaniel::RegResultEjec(wxString errorEjecucion, int num){
                 finEjecucion<<"\t\t\t</Procesar>\n"
                     "\t\t</EventoRegistrado>";
             }
-            ejecucionCorrecta=true;
+//            valor=0;
         }
         if(num==2){
             if(valor==1){

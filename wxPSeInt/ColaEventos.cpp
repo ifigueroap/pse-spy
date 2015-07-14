@@ -5,7 +5,7 @@
 using namespace std;
 int numElementos,tamanoMaxStack;
 queue <string> cola;
-string auxiliar;
+string auxiliar,nombreArchivo,ubicacion;
 
 void ColaEventos::insertar(wxString elemento){
     if(numElementos<tamanoMaxStack-1){
@@ -32,7 +32,6 @@ void ColaEventos::escribirEnXml(){
 
 
 
-
 void ColaEventos::iniciarTagXml(){
     xmlFile<<"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
             "<SecuenciaEventos>"<<endl;
@@ -43,7 +42,15 @@ void ColaEventos::insertarfin(wxString elemento){
     insertar(elemento);
     xmlFile.close();
 }
-
+void ColaEventos::setRepositorioXML(string repositorio, string nombre){
+    repositorioXML.open(repositorio.c_str(),ios::app);
+    if(repositorioXML.is_open()){
+        repositorioXML<<"PseSpy-"+nombre+".xml"<<endl;
+        repositorioXML.close();
+    }else{
+        std::cout<<"No se abrio el archivo";
+    }
+}
 
 ColaEventos::ColaEventos(const char *ubicacion) {
     xmlFile.open(ubicacion,ios::app);

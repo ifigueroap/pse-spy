@@ -61,6 +61,5 @@ string getFechaName(){
     int num, c;
     num=1+rand()%10;
     fecha=fecha.append(IntToString(num));
-    fecha=fecha.append(".xml");
     return fecha;
 }

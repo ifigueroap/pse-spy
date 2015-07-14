@@ -935,8 +935,8 @@ void mxMainWindow::SelectError(wxString text) {
 	if (text.StartsWith(" ERROR ")) {
 		long e=0;
 		text.Mid(7).ToLong(&e);
-		if (config->auto_quickhelp){
-                    ShowQuickHelp(true,help->GetErrorText(text,e));
+		if (!config->auto_quickhelp){
+                    ShowQuickHelp(false,help->GetErrorText(text,e));
                 }
 	}
 }

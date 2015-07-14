@@ -66,7 +66,7 @@ void ConfigManager::LoadDefaults() {
 	stepstep_tspeed=50;
 	debug_port=55374;
 	comm_port=55375;
-	use_dark_psterm = true;
+	use_dark_psterm = false;
 	use_psterm = true;
 	check_for_updates = false;
 	fixed_port = false;
