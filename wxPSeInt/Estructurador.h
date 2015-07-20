@@ -10,11 +10,6 @@ private:
     ofstream archivoXML;
     wxString evento;
 public:
-//Funciones a utilizar en las clases evento y lista.
-    void setEvento(wxString evRegistrado);
-    wxString getEvento();
-    string ubicacion();
-    
 //GESTIONAR ARCHIVO
     void setCodigo(wxString codigo);
     string getCodigo();
@@ -35,7 +30,6 @@ public:
     void setVeriSyntax(wxString nombreArchivo);
     void setRunStepStep(wxString nombreArchivo);
     void setCreateDraw(wxString nombreArchivo);
-    void cerrarTag();
     
     
 //EDICIONES DEL EDITOR
@@ -57,6 +51,8 @@ public:
     void setFindText(wxString nombreAccion, wxString textoBuscado);
     void setFindNext(wxString nombreAccion, wxString textoBuscado);
     void setFindPrev(wxString nombreAccion, wxString textoBuscado);
+    
+    string getRepositorioPath();
     void terminarTags();
     Estructurador();
     Estructurador(const Estructurador& orig);

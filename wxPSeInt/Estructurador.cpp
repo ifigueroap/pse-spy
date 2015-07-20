@@ -6,11 +6,13 @@
 #include "ColaEventos.h"
 #include <wx/stdpaths.h>
 #include "wx/filename.h"
+#include "Mensajero.h"
 using namespace std;
 
 // wxMessageBox(_ZZ("")); MENSAJE DE PRUEBA #include <wx/msgdlg.h>
 Estructurador *estructurador=NULL;
 ColaEventos *colaEv;
+std::string repositorioPath;
 //GESTIONAR ARCHIVO
 //-------------------------------------------------------------------------------
 void Estructurador::setCodigo(wxString codigo){
@@ -397,13 +399,10 @@ void Estructurador::setFindPrev(wxString nombreAccion, wxString textoBuscado){
 }
 string Estructurador::getCodigo(){
         return this->codigo;
-    }
-
-void Estructurador::cerrarTag(){
-    evento.Append("\t\t\t</Procesar>\n"
-        "\t\t</EventoRegistrado>\n");
-//    colaEv->insertar(evento);
-    evento.clear();
+}
+string Estructurador::getRepositorioPath(){
+    std::cout<<"\n"+repositorioPath+"AAA";
+    return repositorioPath;
 }
 void Estructurador::terminarTags(){
     wxString evento;
@@ -411,13 +410,6 @@ void Estructurador::terminarTags(){
     colaEv->insertarfin(evento);
 }
 
-string Estructurador::ubicacion(){
-    string ubic;
-    ubic="C:\\archivosXML\\";
-    ubic.append(getFechaName());
-    ubic.append(".xml");
-    return ubic;
-}
 
 //Constructor
 Estructurador::Estructurador() {
@@ -434,12 +426,17 @@ Estructurador::Estructurador() {
     }
     string nombreArchivo;
     nombreArchivo=getFechaName();
+    repositorioPath=path.GetFullPath();
     path.SetName("PseSpy-"+nombreArchivo+".xml");
     colaEv = new ColaEventos(path.GetFullPath().mb_str());
     path.SetName("RepositorioXML.txt");
-    std::cout<<path.GetFullPath();
     colaEv->iniciarTagXml();
     colaEv->setRepositorioXML(path.GetFullPath().mb_str(),nombreArchivo);
+    
+    
+    //Se crea la clase mensajero para revisar si existen archivos por enviar al inicio del programa
+    Mensajero msj;
+    msj.mostrar(repositorioPath);
 }
 Estructurador::Estructurador(const Estructurador& orig) {
 }

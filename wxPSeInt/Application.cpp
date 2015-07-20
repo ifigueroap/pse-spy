@@ -19,6 +19,7 @@ using namespace std;
 #include "mxUpdatesChecker.h"
 #include "mxIconInstaller.h"
 #include "CommunicationsManager.h"
+#include "Estructurador.h"
 using namespace std;
 
 #ifdef __WXMAC__
@@ -46,11 +47,11 @@ bool mxApplication::OnInit() {
         
 	if (argc==3 && wxString(argv[1])=="--logger") new Logger(argv[2]);
         new LoggerDaniel;
+        
 	wxFileName f_path = wxGetCwd(); 
 	f_path.MakeAbsolute();
 	wxString cmd_path = f_path.GetFullPath();
 	wxFileName f_cmd(argv[0]);
-	
 	wxFileName f_zpath = f_cmd.GetPathWithSep();
 	f_zpath.MakeAbsolute();
 	wxString zpath(f_zpath.GetPathWithSep());

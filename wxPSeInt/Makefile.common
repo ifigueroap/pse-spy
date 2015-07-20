@@ -1,4 +1,4 @@
-OBJS=${OBJS_DIR}/LangSettings.o ${OBJS_DIR}/mxMainWindow.o ${OBJS_DIR}/mxUtils.o ${OBJS_DIR}/ConfigManager.o ${OBJS_DIR}/mxSource.o ${OBJS_DIR}/mxProcess.o ${OBJS_DIR}/HelpManager.o ${OBJS_DIR}/mxBitmapButton.o ${OBJS_DIR}/mxFindDialog.o ${OBJS_DIR}/mxAboutWindow.o ${OBJS_DIR}/mxHelpWindow.o ${OBJS_DIR}/mxDropTarget.o ${OBJS_DIR}/DebugManager.o ${OBJS_DIR}/mxDesktopTestGrid.o ${OBJS_DIR}/mxDesktopTestPanel.o ${OBJS_DIR}/mxEvaluateDialog.o ${OBJS_DIR}/mxUpdatesChecker.o ${OBJS_DIR}/mxConfig.o ${OBJS_DIR}/mxProfile.o ${OBJS_DIR}/mxArt.o ${OBJS_DIR}/mxPrintOut.o ${OBJS_DIR}/mxInputDialog.o ${OBJS_DIR}/RTSyntaxManager.o ${OBJS_DIR}/mxIconInstaller.o ${OBJS_DIR}/mxVarWindow.o ${OBJS_DIR}/mxDebugWindow.o ${OBJS_DIR}/mxSubtitles.o ${OBJS_DIR}/mxStatusBar.o ${OBJS_DIR}/CommunicationsManager.o ${OBJS_DIR}/HtmlExporter.o ${OBJS_DIR}/mxOpersWindow.o ${OBJS_DIR}/Logger.o ${OBJS_DIR}/mxPanelHelper.o ${OBJS_DIR}/mxExportPreview.o ${OBJS_DIR}/Package.o ${OBJS_DIR}/mxTestPanel.o ${OBJS_DIR}/Application.o ${OBJS_DIR}/mxHtmlWindow.o ${OBJS_DIR}/LoggerDaniel.o ${OBJS_DIR}/Estructurador.o ${OBJS_DIR}/Evento.o ${OBJS_DIR}/ColaEventos.o
+OBJS=${OBJS_DIR}/LangSettings.o ${OBJS_DIR}/mxMainWindow.o ${OBJS_DIR}/mxUtils.o ${OBJS_DIR}/ConfigManager.o ${OBJS_DIR}/mxSource.o ${OBJS_DIR}/mxProcess.o ${OBJS_DIR}/HelpManager.o ${OBJS_DIR}/mxBitmapButton.o ${OBJS_DIR}/mxFindDialog.o ${OBJS_DIR}/mxAboutWindow.o ${OBJS_DIR}/mxHelpWindow.o ${OBJS_DIR}/mxDropTarget.o ${OBJS_DIR}/DebugManager.o ${OBJS_DIR}/mxDesktopTestGrid.o ${OBJS_DIR}/mxDesktopTestPanel.o ${OBJS_DIR}/mxEvaluateDialog.o ${OBJS_DIR}/mxUpdatesChecker.o ${OBJS_DIR}/mxConfig.o ${OBJS_DIR}/mxProfile.o ${OBJS_DIR}/mxArt.o ${OBJS_DIR}/mxPrintOut.o ${OBJS_DIR}/mxInputDialog.o ${OBJS_DIR}/RTSyntaxManager.o ${OBJS_DIR}/mxIconInstaller.o ${OBJS_DIR}/mxVarWindow.o ${OBJS_DIR}/mxDebugWindow.o ${OBJS_DIR}/mxSubtitles.o ${OBJS_DIR}/mxStatusBar.o ${OBJS_DIR}/CommunicationsManager.o ${OBJS_DIR}/HtmlExporter.o ${OBJS_DIR}/mxOpersWindow.o ${OBJS_DIR}/Logger.o ${OBJS_DIR}/mxPanelHelper.o ${OBJS_DIR}/mxExportPreview.o ${OBJS_DIR}/Package.o ${OBJS_DIR}/mxTestPanel.o ${OBJS_DIR}/Application.o ${OBJS_DIR}/mxHtmlWindow.o ${OBJS_DIR}/LoggerDaniel.o ${OBJS_DIR}/Estructurador.o ${OBJS_DIR}/Evento.o ${OBJS_DIR}/ColaEventos.o ${OBJS_DIR}/Mensajero.o
 
 ${OBJS_DIR}/LangSettings.o: ../pseint/LangSettings.cpp ../pseint/LangSettings.h Logger.h version.h ../pseint/version_common.h
 	${GPP} ${CXXFLAGS} -c ../pseint/LangSettings.cpp -o $@
@@ -101,6 +101,9 @@ ${OBJS_DIR}/LoggerDaniel.o: LoggerDaniel.cpp LoggerDaniel.h version.h ../pseint/
 
 ${OBJS_DIR}/ColaEventos.o: ColaEventos.cpp ColaEventos.h version.h ../pseint/version_common.h mxUtils.h ConfigManager.h ../pseint/LangSettings.h
 	${GPP} ${CXXFLAGS} -c ColaEventos.cpp -o $@
+
+${OBJS_DIR}/Mensajero.o: Mensajero.cpp Mensajero.h version.h ../pseint/version_common.h mxUtils.h ConfigManager.h ../pseint/LangSettings.h
+	${GPP} ${CXXFLAGS} -c Mensajero.cpp -o $@
 
 ${OBJS_DIR}/Estructurador.o: Estructurador.cpp Estructurador.h version.h ../pseint/version_common.h mxUtils.h ConfigManager.h ../pseint/LangSettings.h
 	${GPP} ${CXXFLAGS} -c Estructurador.cpp -o $@
