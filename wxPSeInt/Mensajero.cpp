@@ -7,7 +7,7 @@
 #include <wx/protocol/http.h>
 #include <wx/sstream.h>
 #include <wx/string.h>
-
+#include <wx/uri.h>
 using namespace std;
 void Mensajero::recogerDatosLocal(string repositorioPath){
     wxString respuestaServidor;
@@ -38,19 +38,19 @@ void Mensajero::recogerDatosLocal(string repositorioPath){
                         contenidoArchivoXML.append("\n");
                     }
                     archivoXML.close();
-                    repositorio.close();
 //------------------------------------------------------------ Se envía el nombreArchivoXML y el contenidoArchivoXML del archivo.
-                    respuestaServidor = Enviar("192.168.10.7","tesis/vistas/RecibeDatos.php","parameters="+nombreArchivoXML+","+contenidoArchivoXML);
+                    respuestaServidor = Enviar("192.168.10.7","tesis/vistas/RecibeDatos.php","dato="+nombreArchivoXML+","+contenidoArchivoXML);
 //------------------------------------------------------------ respuesta son los "echo"
-                    remove(file.c_str());
-                    remove(repositorioXML.c_str());
+//                    remove(file.c_str());
+//                    remove(repositorioXML.c_str());
                 }else{
                     //NO SE PUDO ABRIR EL ARCHIVO, el repositorio.txt apuntaba a un archivo no existente
                 }
             }
         }
+        repositorio.close();
     }
-    cout<<nombreArchivoXML;
+    //Después de perguntar si se abrió o no el repositorio en el cliente
 }
 wxString Mensajero::Enviar(const wxString &ipServidor, const wxString &page, const wxString& parameters){
    wxString respuesta = wxEmptyString;
@@ -58,8 +58,12 @@ wxString Mensajero::Enviar(const wxString &ipServidor, const wxString &page, con
    http.SetHeader("Content-type", "application/x-www-form-urlencoded");
    http.SetPostBuffer(parameters);
    http.Connect(ipServidor,80);
+   wxURI uri(ipServidor);
+//   if (uri.HasPath()) wxMessageBox("SI");
+//   else wxMessageBox("NO");
    wxInputStream *http_stream = http.GetInputStream("/"+page);
    if (http.GetError() == wxPROTO_NOERR){
+//       wxMessageBox("A");
       wxStringOutputStream out_stream(&respuesta);
       http_stream->Read(out_stream);
    }else{
