@@ -27,7 +27,7 @@
 #include "mxConfig.h"
 #include "mxProfile.h"
 #include "mxPrintOut.h"
-
+#include "ColaEventos.h"
 #define IF_THERE_IS_SOURCE if (notebook->GetPageCount()>0)
 #define CURRENT_SOURCE ((mxSource*)notebook->GetPage(notebook->GetSelection()))
 #include "mxInputDialog.h"
@@ -305,9 +305,11 @@ void mxMainWindow::CreateMenus() {
 	mi_highlight_blocks = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_HIGHLIGHT_BLOCKS, _Z("Resaltar bloques logicos"),"",config->highlight_blocks);
 	mi_calltip_helps = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_CALLTIP_HELPS, _Z("Utilizar Ayudas Emergentes"),"",config->calltip_helps);
 	mi_smart_indent = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SMART_INDENT, _Z("Utilizar Indentado Inteligente"),"",config->smart_indent);
-	mi_rt_syntax = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_RT_SYNTAX, _Z("Comprobar Sintaxis Mientras Escribe"),"",config->rt_syntax);
-//	mi_quickhelp = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SHOW_QUICKHELP, _Z("Mostrar Ayuda Rapida"),"",config->auto_quickhelp);
-	cfg->AppendSubMenu(cfg_help,_Z("Asistencias"));
+//	mi_rt_syntax = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_RT_SYNTAX, _Z("Comprobar Sintaxis Mientras Escribe"),"",config->rt_syntax);
+        mi_farmer=utils->AddCheckToMenu(cfg_help,mxID_HELP_FARMER, _Z("Activar recolector de datos"),"",config->farmer);
+//        mi_quickhelp = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SHOW_QUICKHELP, _Z("Mostrar Ayuda Rapida"),"",config->auto_quickhelp);
+	
+        cfg->AppendSubMenu(cfg_help,_Z("Asistencias"));
 	
 	wxMenu *cfg_pres = new wxMenu;
 	mi_animate_gui = utils->AddCheckToMenu(cfg_pres,mxID_CONFIG_ANIMATE_GUI, _Z("Animar paneles"),"",config->animate_gui);
@@ -1254,6 +1256,19 @@ void mxMainWindow::OnConfigAutoComp(wxCommandEvent &evt) {
 	} else {
 		mi_autocomp->Check(true);
 		config->autocomp=true;
+	}
+}
+void mxMainWindow::OnConfigFarmer(wxCommandEvent &evt) {
+    ColaEventos ev;
+	if (!mi_farmer->IsChecked()) {
+		mi_farmer->Check(false);
+		config->farmer=false;
+                ev.setActivar(false);
+                wxMessageBox("A");
+	} else {
+		mi_farmer->Check(true);
+		config->farmer=true;
+                wxMessageBox("B");
 	}
 }
 

@@ -71,6 +71,7 @@ void ConfigManager::LoadDefaults() {
 	check_for_updates = false;
 	fixed_port = false;
 	rt_syntax = false;
+        farmer = true;
 	smart_indent = false;
 	last_dir=wxFileName::GetHomeDir();
 #if defined(_WIN32) || defined(__WIN32__)

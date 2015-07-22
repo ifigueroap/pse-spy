@@ -12,6 +12,10 @@ public:
     void insertarfin(wxString elemento);
     void iniciarTagXml();
     void setRepositorioXML(string repositorio, string nombre);
+    
+    
+    void setActivar(bool act);
+    bool getActivar();
     ColaEventos(const char *ubicacion);
     ColaEventos();
     ColaEventos(const ColaEventos& orig);

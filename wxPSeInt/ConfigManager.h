@@ -59,6 +59,7 @@ public:
 	bool autoclose;
 	bool calltip_helps;
 	bool rt_syntax;
+        bool farmer;
 	bool smart_indent;
 	int font_size;
 	int tabw;

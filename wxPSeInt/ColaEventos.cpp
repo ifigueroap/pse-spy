@@ -6,6 +6,7 @@ using namespace std;
 int numElementos,tamanoMaxStack;
 queue <string> cola;
 string auxiliar,nombreArchivo,ubicacion;
+bool activado=true;
 
 void ColaEventos::insertar(wxString elemento){
     if(numElementos<tamanoMaxStack-1){
@@ -60,6 +61,12 @@ ColaEventos::ColaEventos(const char *ubicacion) {
     numElementos=0;
     tamanoMaxStack=2;
     auxiliar.clear();
+}
+void ColaEventos::setActivar(bool act){
+    activado=act;
+}
+bool ColaEventos::getActivar(){
+    return activado;
 }
 
 ColaEventos::ColaEventos() {

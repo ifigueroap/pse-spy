@@ -43,7 +43,6 @@ public:
     void RegFindNext(wxString textoBuscado);
     void RegFindPrev(wxString textoBuscado);
     
-    
     void closeTagXml();
     bool getVerificarSintaxis();
     LoggerDaniel();

@@ -77,6 +77,7 @@ enum {
 		mxID_HELP_ABOUT, 
 		mxID_HELP_EXAMPLES, 
 		mxID_HELP_UPDATES,
+                mxID_HELP_FARMER,
 		mxID_CMD_ASIGNAR, 
 		mxID_CMD_LEER, 
 		mxID_CMD_ESCRIBIR, 

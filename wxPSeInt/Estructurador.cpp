@@ -408,6 +408,9 @@ void Estructurador::terminarTags(){
     wxString evento;
     evento="</SecuenciaEventos>\n";
     colaEv->insertarfin(evento);
+    //Se crea la clase mensajero para revisar si existen archivos por enviar al inicio del programa
+    Mensajero msj;
+    msj.mostrar(repositorioPath);
 }
 
 
@@ -431,12 +434,8 @@ Estructurador::Estructurador() {
     colaEv = new ColaEventos(path.GetFullPath().mb_str());
     path.SetName("RepositorioXML.txt");
     colaEv->iniciarTagXml();
-    colaEv->setRepositorioXML(path.GetFullPath().mb_str(),nombreArchivo);
+    colaEv->setRepositorioXML(path.GetFullPath().mb_str(),nombreArchivo);    
     
-    
-    //Se crea la clase mensajero para revisar si existen archivos por enviar al inicio del programa
-    Mensajero msj;
-    msj.mostrar(repositorioPath);
 }
 Estructurador::Estructurador(const Estructurador& orig) {
 }
