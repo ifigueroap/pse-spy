@@ -1,6 +1,6 @@
 #include "Estructurador.h"
 #include <wx/String.h>
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include <wx/msgdlg.h>
 #include "dateTime.h"
 #include "ColaEventos.h"

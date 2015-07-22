@@ -2,14 +2,14 @@
 #include <wx/datetime.h>
 #include "string_conversions.h"
 #include <wx/string.h>
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include "version.h"
 #include "mxUtils.h"
 #include "ConfigManager.h"
 #include <iostream>
 #include "Estructurador.h"
 #include <windows.h>
-LoggerDaniel *loggerDaniel=NULL;
+Recolector *recolector=NULL;
 Estructurador estructuraDatos;
 wxString finEjecucion;
 int sintaxisCorrecta=0;
@@ -17,24 +17,24 @@ int valor=0;
 int valor2=0;
 bool ejecucionCorrecta;//Variables para manejo de funcionalidades de registro de resultados
 //----------------------------------REGISTRAR CODIGO DEL ARCHIVO----------------------------------
-void LoggerDaniel::RegCode(wxString codigo){//Registrar código
+void Recolector::RegCode(wxString codigo){//Registrar código
     estructuraDatos.setCodigo(codigo);
 }
 //----------------------------------REGISTRAR MODIFICAR ARCHIVO----------------------------------
 
-void LoggerDaniel::RegCreateFile(){
+void Recolector::RegCreateFile(){
     estructuraDatos.setCreateFile("SinTitulo");
 }
-void LoggerDaniel::RegCloseFile(wxString nombreArchivo){
+void Recolector::RegCloseFile(wxString nombreArchivo){
     estructuraDatos.setCloseFile(nombreArchivo);
 }
-void LoggerDaniel::RegOpenFile(wxString dirArchivo,wxString nombreArchivo){
+void Recolector::RegOpenFile(wxString dirArchivo,wxString nombreArchivo){
     estructuraDatos.setOpenFile(nombreArchivo+".psc");
 }
-void LoggerDaniel::RegSaveFile(wxString nombreArchivo){
+void Recolector::RegSaveFile(wxString nombreArchivo){
     estructuraDatos.setSaveFile(nombreArchivo);
 }
-void LoggerDaniel::RegSaveFileAs(wxString nombreArchivo){
+void Recolector::RegSaveFileAs(wxString nombreArchivo){
     estructuraDatos.setSaveFileAs(nombreArchivo);
 }
 
@@ -42,21 +42,21 @@ void LoggerDaniel::RegSaveFileAs(wxString nombreArchivo){
 //----------------------------------REGISTRAR PROCESAR ARCHIVO----------------------------------
 
 //Procesar codigo fuente(ejecutar,ejecutar paso a paso, dibujar, verificar sintaxis)
-void LoggerDaniel::RegRunSource(wxString nombreArchivo){
+void Recolector::RegRunSource(wxString nombreArchivo){
     estructuraDatos.setRunSource(nombreArchivo);
 }
-void LoggerDaniel::RegRunStepStep(wxString nombreArchivo){
+void Recolector::RegRunStepStep(wxString nombreArchivo){
     estructuraDatos.setRunStepStep(nombreArchivo);
 }
-void LoggerDaniel::RegCreateDraw(wxString nombreArchivo){
+void Recolector::RegCreateDraw(wxString nombreArchivo){
     estructuraDatos.setCreateDraw(nombreArchivo);
 }
-void LoggerDaniel::RegVeriSyntax(wxString nombreArchivo){
+void Recolector::RegVeriSyntax(wxString nombreArchivo){
     estructuraDatos.setVeriSyntax(nombreArchivo);
 }
 
 //Resultado del procesamiento del codigo fuente
-void LoggerDaniel::RegResultSyntax(wxString error,wxString textoConError){
+void Recolector::RegResultSyntax(wxString error,wxString textoConError){
     wxString lineaError;
     if(error=="NO"){//NO encuentra errores de sintaxis
         sintaxisCorrecta=1;//Permite que se registren errores de ejecución
@@ -75,7 +75,7 @@ void LoggerDaniel::RegResultSyntax(wxString error,wxString textoConError){
         estructuraDatos.setErrorSintaxis(lineaError,error,textoConError);
     }
 }
-void LoggerDaniel::RegNumErrorSyntax(int numErrores){
+void Recolector::RegNumErrorSyntax(int numErrores){
     if(numErrores==0){
         RegResultEjec("",0);
     }
@@ -83,7 +83,7 @@ void LoggerDaniel::RegNumErrorSyntax(int numErrores){
         estructuraDatos.setNumErrorSintaxis(numErrores);
     }
 }
-void LoggerDaniel::RegResultEjec(wxString errorEjecucion, int num){
+void Recolector::RegResultEjec(wxString errorEjecucion, int num){
     if(sintaxisCorrecta==1){//Sólo recibe errores de EJECUCION
         if(num==1){
             valor=1;
@@ -121,26 +121,26 @@ void LoggerDaniel::RegResultEjec(wxString errorEjecucion, int num){
 //----------------------------------REGISTRAR EDICION DEL EDITOR ----------------------------------
 
 //(Cortar, copiar, pegar, deshacer, rehacer,etc.)
-void LoggerDaniel::RegCutCode(wxString textoRelevante, int lineaActual){
+void Recolector::RegCutCode(wxString textoRelevante, int lineaActual){
     estructuraDatos.setCutCode(textoRelevante);
 }
-void LoggerDaniel::RegCopyCode(wxString textoRelevante,int lineaActual){
+void Recolector::RegCopyCode(wxString textoRelevante,int lineaActual){
     estructuraDatos.setCopyCode(textoRelevante);
 }
-void LoggerDaniel::RegPasteCode(wxString textoBorrado,int lineaActual, wxString textoPegado){
+void Recolector::RegPasteCode(wxString textoBorrado,int lineaActual, wxString textoPegado){
     if(textoBorrado.IsEmpty() ){
         estructuraDatos.setPasteCode(textoPegado);
     }else{
         estructuraDatos.setPasteCode(textoBorrado,textoPegado);
     }
 }
-void LoggerDaniel::RegUndo(){
+void Recolector::RegUndo(){
     estructuraDatos.setUndo("Deshacer");
 }
-void LoggerDaniel::RegRedo(){
+void Recolector::RegRedo(){
     estructuraDatos.setRedo("Rehacer");
 }
-void LoggerDaniel::RegCommentCode(int inicio, int fin){
+void Recolector::RegCommentCode(int inicio, int fin){
     if (inicio==fin){
         estructuraDatos.setComment("Comentar",inicio);
     }
@@ -148,7 +148,7 @@ void LoggerDaniel::RegCommentCode(int inicio, int fin){
         estructuraDatos.setComment("Comentar",inicio,fin);
     }
 }
-void LoggerDaniel::RegUncommentCode(int inicio, int fin){
+void Recolector::RegUncommentCode(int inicio, int fin){
     if (inicio==fin){
         estructuraDatos.setUnComment("Descomentar",inicio);
     }
@@ -156,47 +156,47 @@ void LoggerDaniel::RegUncommentCode(int inicio, int fin){
         estructuraDatos.setUnComment("Descomentar",inicio,fin);
     }
 }
-void LoggerDaniel::RegDeleteLines(int inicio, int fin, wxString textoBorrado){
+void Recolector::RegDeleteLines(int inicio, int fin, wxString textoBorrado){
     estructuraDatos.setDeleteLines("EliminarLineas",inicio,fin,textoBorrado);
 }
-void LoggerDaniel::RegDeleteLines(int inicio, wxString textoBorrado){
+void Recolector::RegDeleteLines(int inicio, wxString textoBorrado){
     estructuraDatos.setDeleteLines("EliminarLineas",inicio,textoBorrado);
 }
-void LoggerDaniel::RegDuplicateLines(int inicio, int fin, wxString textoDuplicado){
+void Recolector::RegDuplicateLines(int inicio, int fin, wxString textoDuplicado){
     estructuraDatos.setDuplicateLines("DuplicarLineas",inicio,fin,textoDuplicado);
 }
-void LoggerDaniel::RegDuplicateLines(int inicio, wxString textoDuplicado){
+void Recolector::RegDuplicateLines(int inicio, wxString textoDuplicado){
     estructuraDatos.setDuplicateLines("DuplicarLineas",inicio,textoDuplicado);
 }
-void LoggerDaniel::RegSelectAll(wxString texto){
+void Recolector::RegSelectAll(wxString texto){
     estructuraDatos.setselectAll("SeleccionarTodo",texto);
 }
-void LoggerDaniel::RegFindText(wxString textoBuscado){
+void Recolector::RegFindText(wxString textoBuscado){
     estructuraDatos.setFindText("Buscar",textoBuscado);
 }
-void LoggerDaniel::RegFindNext(wxString textoBuscado){
+void Recolector::RegFindNext(wxString textoBuscado){
     estructuraDatos.setFindNext("BuscarSiguiente",textoBuscado);
 }
-void LoggerDaniel::RegFindPrev(wxString textoBuscado){
+void Recolector::RegFindPrev(wxString textoBuscado){
     estructuraDatos.setFindPrev("BuscarAnterior",textoBuscado);
 }
 
 
 //Funcion para cerrar tag XML "sin errores fuera de ejecucion"
-void LoggerDaniel::closeTagXml(){
+void Recolector::closeTagXml(){
     estructuraDatos.terminarTags();
 }
 
 
 //CONSTRUCTOR
-LoggerDaniel::LoggerDaniel(){
+Recolector::Recolector(){
     sintaxisCorrecta=0;//Se utiliza para manejar cuándo aparecen los errores de ejecucion(solo cuando hay sintaxis correcta)
     ejecucionCorrecta=true;
     valor=valor2=0;
 }
 
 //DESTRUCTOR
-LoggerDaniel::~LoggerDaniel() {
+Recolector::~Recolector() {
 }
 
 

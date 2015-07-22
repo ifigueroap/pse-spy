@@ -1,5 +1,5 @@
 #include "mxDropTarget.h"
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include "mxUtils.h"
 #include "mxMainWindow.h"
 

@@ -7,7 +7,7 @@
 //#include <wx/artprov.h>
 #include <wx/textfile.h>
 //#include <wx/cmndata.h>
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include "mxUtils.h"
 #include "mxMainWindow.h"
 #include "ids.h"
@@ -237,7 +237,7 @@ mxMainWindow::~mxMainWindow() {
 	RTSyntaxManager::Stop();
 	aui_manager.UnInit();
 	if (logger) delete logger;
-        loggerDaniel->closeTagXml();
+        recolector->closeTagXml();
 }
 
 void mxMainWindow::CreateMenus() {
@@ -521,7 +521,7 @@ void mxMainWindow::CloseTestPackage() {
 
 void mxMainWindow::OnFileNew(wxCommandEvent &evt){
 //------------------------------------------------------------------------------------------------------
-        loggerDaniel->RegCreateFile();	
+        recolector->RegCreateFile();	
         NewProgram();
 }
 
@@ -558,12 +558,12 @@ void mxMainWindow::OnFileClose(wxCommandEvent &evt) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source=CURRENT_SOURCE;
                 if (source->sin_titulo){
-//                    loggerDaniel->RegCloseFile("Sin titulo");
+//                    recolector->RegCloseFile("Sin titulo");
                 }
                 else{
 //                    wxMessageBox(_ZZ(source->filename));
 //-------------------------------------------------------------------------------------------------------------------
-//                    loggerDaniel->RegCloseFile(source->filename);
+//                    recolector->RegCloseFile(source->filename);
                 }
 		if (source->GetModify()) {
                     
@@ -601,7 +601,7 @@ void mxMainWindow::OnFileOpen(wxCommandEvent &evt) {
                     config->last_dir=wxFileName(paths[0]).GetPath();
 //                  wxMessageBox(_ZZ(wxFileName(paths[0]).GetPathWithSep()<<wxFileName(paths[0]).GetName()));
                 }
-                loggerDaniel->RegOpenFile(wxFileName(paths[0]).GetPathWithSep(),wxFileName(paths[0]).GetName());
+                recolector->RegOpenFile(wxFileName(paths[0]).GetPathWithSep(),wxFileName(paths[0]).GetName());
 	}
 }
 
@@ -660,8 +660,8 @@ mxSource *mxMainWindow::OpenProgram(wxString path, bool is_example) {
 	notebook->AddPage(source,wxFileName(path).GetFullName(),true);
         source->LoadFile(path);
 //--------------------------------------------------------------------------------------------------------
-//        loggerDaniel->RegOpenFile(source->GetText());
-        loggerDaniel->RegCode(source->GetText());
+//        recolector->RegOpenFile(source->GetText());
+        recolector->RegCode(source->GetText());
         if (is_example) source->SetExample();
 	if (config->rt_syntax) source->DoRealTimeSyntax();
 	source->SetStatus(STATUS_NEW_SOURCE);
@@ -679,8 +679,8 @@ void mxMainWindow::OnFileSave(wxCommandEvent &evt) {
                     source->SaveFile(source->filename);
                 }
 //-------------------------------------------------------------------------------------------------------------------
-            loggerDaniel->RegCode(source->GetText());
-            loggerDaniel->RegSaveFile(source->filename);            
+            recolector->RegCode(source->GetText());
+            recolector->RegSaveFile(source->filename);            
 	}
 }
 
@@ -699,8 +699,8 @@ void mxMainWindow::OnFileSaveAs(wxCommandEvent &evt) {
 			source->SetPageText(file.GetFullName());
 			RegenFileMenu(file.GetFullPath());
 //----------------------------------------------------------------------------------------------------------------
-                        loggerDaniel->RegCode(source->GetText());
-                        loggerDaniel->RegSaveFileAs(source->filename);
+                        recolector->RegCode(source->GetText());
+                        recolector->RegSaveFileAs(source->filename);
 		}
 	}
 }
@@ -721,13 +721,13 @@ void mxMainWindow::OnRunRun(wxCommandEvent &evt) {
 void mxMainWindow::RunCurrent(bool raise, bool from_psdraw) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source=CURRENT_SOURCE;
-                loggerDaniel->RegCode(source->GetText());
+                recolector->RegCode(source->GetText());
                 if (source->sin_titulo){
-                    loggerDaniel->RegRunSource("Sin titulo");
+                    recolector->RegRunSource("Sin titulo");
                 }
                 else{
 //-------------------------------------------------------------------------------------------------------------------
-                    loggerDaniel->RegRunSource(source->filename);
+                    recolector->RegRunSource(source->filename);
                 }
 		if (!from_psdraw && source->GetFlowSocket()) {
 			source->GetFlowSocket()->Write("send run\n",9);
@@ -748,12 +748,12 @@ void mxMainWindow::RunCurrent(bool raise, bool from_psdraw) {
 void mxMainWindow::OnRunStepStep(wxCommandEvent &evt) {
     IF_THERE_IS_SOURCE {
 		mxSource *source=CURRENT_SOURCE;
-                loggerDaniel->RegCode(source->GetText());
+                recolector->RegCode(source->GetText());
                 if (source->sin_titulo){
-                    loggerDaniel->RegRunStepStep("Sin titulo");
+                    recolector->RegRunStepStep("Sin titulo");
                 }
                 else{
-                    loggerDaniel->RegRunStepStep(source->filename);
+                    recolector->RegRunStepStep(source->filename);
                 }
     }
 	debug_panel->DebugStartFromGui();
@@ -767,14 +767,14 @@ void mxMainWindow::OnRunSubtitles(wxCommandEvent &evt) {
 void mxMainWindow::OnRunCheck(wxCommandEvent &evt) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source = CURRENT_SOURCE;
-                loggerDaniel->RegCode(source->GetText());
+                recolector->RegCode(source->GetText());
 		wxString fname=source->SaveTemp();
                 if (source->sin_titulo){
-                    loggerDaniel->RegVeriSyntax("Sin titulo");
+                    recolector->RegVeriSyntax("Sin titulo");
                 }
                 else{
 //-------------------------------------------------------------------------------------------------------------------
-                    loggerDaniel->RegVeriSyntax(source->filename);
+                    recolector->RegVeriSyntax(source->filename);
                 }
 		if (debug->debugging)
 			debug->Stop();
@@ -812,17 +812,17 @@ void mxMainWindow::OnClose(wxCloseEvent &evt) {
 	IF_THERE_IS_SOURCE {
 		for (int i=notebook->GetPageCount()-1;i>=0;i--) {
 			mxSource *source = (mxSource*)(notebook->GetPage(i));
-                        loggerDaniel->RegCode(source->GetText());
+                        recolector->RegCode(source->GetText());
 			if (source->GetModify()) {
 				notebook->SetSelection(i);
 				int res=wxMessageBox(_Z("Hay cambios sin guardar. ¿Desea guardarlos antes de salir?"), source->filename, wxYES_NO|wxCANCEL,this);
 				if (res&wxYES) {
 					if (!source->sin_titulo){
                                             source->SaveFile(source->filename);
-                                            loggerDaniel->RegCode(source->GetText());
+                                            recolector->RegCode(source->GetText());
                                         }
 					else{
-                                            loggerDaniel->RegCode(source->GetText());
+                                            recolector->RegCode(source->GetText());
                                             wxCommandEvent evt;
                                             OnFileSaveAs(evt);
                                             if (source->GetModify())
@@ -1392,12 +1392,12 @@ void mxMainWindow::OnNotebookPageClose(wxAuiNotebookEvent& event)  {
 				OnFileSaveAs(evt);
 				if (source->GetModify()) {
 					event.Veto();
-//                                        loggerDaniel->RegCloseFile("AJSDOAJSDOJ");
+//                                        recolector->RegCloseFile("AJSDOAJSDOJ");
 					return;
 				}
 			} else
 				source->SaveFile(source->filename);
-//                                loggerDaniel->RegCloseFile("AJSDOAJSDOJ");
+//                                recolector->RegCloseFile("AJSDOAJSDOJ");
                         
 		}
 	}
@@ -1548,12 +1548,12 @@ void mxMainWindow::OnRunSetInput (wxCommandEvent & evt) {
 void mxMainWindow::OnFileEditFlow (wxCommandEvent & evt) {
 	IF_THERE_IS_SOURCE {
 		mxSource *source = CURRENT_SOURCE;
-                loggerDaniel->RegCode(source->GetText());
+                recolector->RegCode(source->GetText());
                 if (source->sin_titulo){
-                    loggerDaniel->RegCreateDraw("Sin titulo");
+                    recolector->RegCreateDraw("Sin titulo");
                 }
                 else{
-                    loggerDaniel->RegCreateDraw(source->filename);
+                    recolector->RegCreateDraw(source->filename);
                 }
 		if (source->GetFlowSocket()) { 
 			source->GetFlowSocket()->Write("raise\n",6); 
@@ -2007,7 +2007,7 @@ void mxMainWindow::RTreeDone (bool show, bool error) {
 		ShowResults(show,!error);
 		SelectFirstError();
 	}
-        loggerDaniel->RegResultEjec("",2);
+        recolector->RegResultEjec("",2);
 }
 
 /**

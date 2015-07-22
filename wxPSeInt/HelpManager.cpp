@@ -2,7 +2,7 @@
 #include <wx/textfile.h>
 #include "ConfigManager.h"
 #include "string_conversions.h"
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include <wx/msgdlg.h>
 
 HelpManager *help;
@@ -54,7 +54,7 @@ void HelpManager::LoadErrors() {
 
 wxString HelpManager::GetErrorText(const wxString &text, int num) {//Muestra errores de ejecución y SINTAXIS
 	wxString ret(_Z("<HTML><HEAD><TITLE>PSeInt QuickHelp</TITLE></HEAD><BODY><B>"));
-	loggerDaniel->RegResultEjec(_ZZ(text),1);//Muestra sólo errores de ejecución, se filtran con el booleano dentro de la fn
+	recolector->RegResultEjec(_ZZ(text),1);//Muestra sólo errores de ejecución, se filtran con el booleano dentro de la fn
         if (num>=MAX_ERRORS_TXT || errors[num].Len()==0){
             ret<<utils->ToHtml(text)<<_Z("</B><BR><BR>No se encontro descripción para este error <BR><BR></BODY></HTML>");
         }else

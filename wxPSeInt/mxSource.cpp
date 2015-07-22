@@ -23,7 +23,7 @@ using namespace std;
 #include "DebugManager.h"
 #include "mxMainWindow.h"
 #include "RTSyntaxManager.h"
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 
 #define RT_DELAY 1000
 #define RELOAD_DELAY 3500
@@ -212,10 +212,10 @@ static void mxRemoveFile(const wxString &file) {
 }
 static void mxRemoveFile(const wxString &file,wxString filename) {
     if(filename.IsEmpty()){
-        loggerDaniel->RegCode("");
-        loggerDaniel->RegCloseFile(file);
+        recolector->RegCode("");
+        recolector->RegCloseFile(file);
     }else{
-        loggerDaniel->RegCloseFile(filename);
+        recolector->RegCloseFile(filename);
     }
     if (wxFileName::FileExists(file)) wxRemoveFile(file);
 }
@@ -289,13 +289,13 @@ void mxSource::SetStyling(bool colour) {
 void mxSource::OnEditCut(wxCommandEvent &evt) {
 	if (GetReadOnly()) return MessageReadOnly();
 	if (GetSelectionEnd()-GetSelectionStart() <= 0) return;
-        loggerDaniel->RegCutCode(GetTextRange(GetSelectionStart(),GetSelectionEnd()),GetCurrentLine() );
+        recolector->RegCutCode(GetTextRange(GetSelectionStart(),GetSelectionEnd()),GetCurrentLine() );
 	Cut();
 }
 
 void mxSource::OnEditCopy(wxCommandEvent &evt) {
 	if (GetSelectionEnd()-GetSelectionStart() <= 0) return;
-        loggerDaniel->RegCopyCode(GetTextRange(GetSelectionStart(),GetSelectionEnd()),GetCurrentLine() );
+        recolector->RegCopyCode(GetTextRange(GetSelectionStart(),GetSelectionEnd()),GetCurrentLine() );
 	Copy();
 }
 
@@ -322,7 +322,7 @@ void mxSource::OnEditPaste(wxCommandEvent &evt) {
 	// insertar el nuevo texto
 	int cp = GetCurrentPos();
 	InsertText(cp,str);
-        loggerDaniel->RegPasteCode(textoSobreEscrito,GetCurrentLine(),str);
+        recolector->RegPasteCode(textoSobreEscrito,GetCurrentLine(),str);
 	// indentar el nuevo texto
 	int l1 = LineFromPosition(cp);
 	int l2 = LineFromPosition(cp+str.Len());
@@ -348,14 +348,14 @@ void mxSource::OnEditPaste(wxCommandEvent &evt) {
 
 void mxSource::OnEditUndo(wxCommandEvent &evt) {
 	if (!CanUndo()) return;
-//        loggerDaniel->RegCopyCode(GetDragText(),GetCurrentLine() );
-        loggerDaniel->RegUndo();
+//        recolector->RegCopyCode(GetDragText(),GetCurrentLine() );
+        recolector->RegUndo();
 	Undo();	
 }
 
 void mxSource::OnEditRedo(wxCommandEvent &evt) {
 	if (!CanRedo()) return;
-        loggerDaniel->RegRedo();
+        recolector->RegRedo();
 	Redo();
 }
 
@@ -373,7 +373,7 @@ void mxSource::OnEditComment(wxCommandEvent &evt) {
 	if (min>max) { int aux=min; min=max; max=aux; }
 	if (max>min && PositionFromLine(max)==GetSelectionEnd()) max--;
 	BeginUndoAction();
-        loggerDaniel->RegCommentCode(min,max);
+        recolector->RegCommentCode(min,max);
 	for (int i=min;i<=max;i++) {
 		//if (GetLine(i).Left(2)!="//") {
 		SetTargetStart(PositionFromLine(i));
@@ -389,7 +389,7 @@ void mxSource::OnEditUnComment(wxCommandEvent &evt) {
 	int ss = GetSelectionStart();
 	int min=LineFromPosition(ss);
 	int max=LineFromPosition(GetSelectionEnd());
-        loggerDaniel->RegUncommentCode(min,max);
+        recolector->RegUncommentCode(min,max);
 	if (max>min && PositionFromLine(max)==GetSelectionEnd()) max--;
 	BeginUndoAction();
 	for (int i=min;i<=max;i++) {
@@ -414,7 +414,7 @@ void mxSource::OnEditDelete(wxCommandEvent &evt) {
 	int min=LineFromPosition(ss=GetSelectionStart());
 	int max=LineFromPosition(se=GetSelectionEnd());
 	if (max==min) {
-            loggerDaniel->RegDeleteLines(min,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
+            recolector->RegDeleteLines(min,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
 		LineDelete();
 		if (PositionFromLine(ss)!=min)
 			GotoPos(GetLineEndPosition(min));
@@ -424,7 +424,7 @@ void mxSource::OnEditDelete(wxCommandEvent &evt) {
 		if (min>max) { int aux=min; min=max; max=aux; aux=ss; ss=se; se=aux;}
 		if (max>min && PositionFromLine(max)==GetSelectionEnd()) max--;
 		GotoPos(ss);
-                loggerDaniel->RegDeleteLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
+                recolector->RegDeleteLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
 		BeginUndoAction();
 		for (int i=min;i<=max;i++)
 			LineDelete();
@@ -443,23 +443,23 @@ void mxSource::OnEditDuplicate(wxCommandEvent &evt) {
 	int max=LineFromPosition(se=GetSelectionEnd());
 	BeginUndoAction();
 	if (max==min) {
-                loggerDaniel->RegDuplicateLines(min,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
+                recolector->RegDuplicateLines(min,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
 		LineDuplicate();
 	} else {
 		if (min>max) { 
 			int aux=min; 
 			min=max; 
 			max=aux;
-                        loggerDaniel->RegDuplicateLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
+                        recolector->RegDuplicateLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
 		}
 		if (max>min && PositionFromLine(max)==GetSelectionEnd()){
                     max--;
-                    loggerDaniel->RegDuplicateLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
+                    recolector->RegDuplicateLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
                 }
 		wxString text;
 		for (int i=min;i<=max;i++)
 			text+=GetLine(i);
-                loggerDaniel->RegDuplicateLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
+                recolector->RegDuplicateLines(min,max,GetTextRange(GetLineIndentPosition(min),GetLineEndPosition(max)));
 		InsertText(PositionFromLine(max+1),text);
 		SetSelection(ss,se);
 	}
@@ -467,7 +467,7 @@ void mxSource::OnEditDuplicate(wxCommandEvent &evt) {
 }
 
 void mxSource::OnEditSelectAll (wxCommandEvent &event) {
-        loggerDaniel->RegSelectAll(GetTextRange(0,GetTextLength()));
+        recolector->RegSelectAll(GetTextRange(0,GetTextLength()));
 	SetSelection (0, GetTextLength ());
 }
 
@@ -1378,7 +1378,7 @@ void mxSource::OnTimer (wxTimerEvent & te) {
 //			_LOG("mxSource::OnTimer out");
 			return; // solo si tiene el foco
 		}
-//                loggerDaniel->RegFileState(GetTextRange(0,GetLength()));
+//                recolector->RegFileState(GetTextRange(0,GetLength()));
 //              GetLength() GetTextRange
 		DoRealTimeSyntax(); HighLightBlock();
 	}else if (te.GetEventObject()==reload_timer) {
@@ -1797,7 +1797,7 @@ void mxSource::GetCurrentKeyword2 (int pos) {
             int s=WordStartPosition(pos,true);
             if (GetCharAt(s-1)=='#') s--;
             int e=WordEndPosition(pos,true);
-//            loggerDaniel->RegModifyFile(s,e,GetTextRange(s,e));
+//            recolector->RegModifyFile(s,e,GetTextRange(s,e));
 //        }
 }
 

@@ -1,7 +1,7 @@
 #include "mxFindDialog.h"
 #include <wx/sizer.h>
 #include "mxUtils.h"
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include <wx/button.h>
@@ -75,7 +75,7 @@ void mxFindDialog::ShowFind(mxSource *source) {
 	if (source) {
 		int i=source->GetSelectionStart();
 		int f=source->GetSelectionEnd();
-//                loggerDaniel->RegFindText(source->GetTextRange(i,f));
+//                recolector->RegFindText(source->GetTextRange(i,f));
 //		if (i==f) {
 //			int s=source->WordStartPosition(i,true);
 //			int e=source->WordEndPosition(i,true);
@@ -86,11 +86,11 @@ void mxFindDialog::ShowFind(mxSource *source) {
 			combo_find->SetSelection(combo_find->GetCount()-1);
 			if (i<f){
 				combo_find->SetValue(source->GetTextRange(i,f));
-                                loggerDaniel->RegFindText(source->GetTextRange(i,f));
+                                recolector->RegFindText(source->GetTextRange(i,f));
                         }
 			else{
 				combo_find->SetValue(source->GetTextRange(f,i));
-                                loggerDaniel->RegFindText(source->GetTextRange(f,i));
+                                recolector->RegFindText(source->GetTextRange(f,i));
                         }
 		} else {
 			if (combo_find->GetCount()>1)
@@ -170,7 +170,7 @@ bool mxFindDialog::FindPrev() {
 		if (ret>=0) {
 			source->EnsureVisibleEnforcePolicy(source->LineFromPosition(ret));
 			source->SetSelection(source->GetTargetStart(),source->GetTargetEnd());
-                        loggerDaniel->RegFindPrev(source->GetSelectedText());
+                        recolector->RegFindPrev(source->GetSelectedText());
 			return true;
 		} else { 
 			wxMessageBox(wxString(_T("La cadena \""))<<last_search<<_T("\" no se encontró."), _T("Buscar"));
@@ -204,7 +204,7 @@ bool mxFindDialog::FindNext() {
 		if (ret>=0) {
 			source->EnsureVisibleEnforcePolicy(source->LineFromPosition(ret));
 			source->SetSelection(source->GetTargetStart(),source->GetTargetEnd());
-                        loggerDaniel->RegFindNext(source->GetSelectedText());
+                        recolector->RegFindNext(source->GetSelectedText());
 			return true;
 		} else { 
 			return false;

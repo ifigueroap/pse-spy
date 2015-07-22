@@ -4,7 +4,7 @@
 #include <fstream>
 //#include <wx/string.h>
 using namespace std;
-class LoggerDaniel {
+class Recolector {
 private:
 protected:
 public:    
@@ -45,17 +45,17 @@ public:
     
     void closeTagXml();
     bool getVerificarSintaxis();
-    LoggerDaniel();
-    ~LoggerDaniel();
+    Recolector();
+    ~Recolector();
 };
 
 //inline wxString &operator<<(wxString &s, void *p) { return s<<reinterpret_cast<unsigned long>(p); }
 
-extern LoggerDaniel *loggerDaniel;
+extern Recolector *recolector;
 #ifdef DEBUG
 	#define _LOG(x) cerr<<x<<endl; if (logger) logger->Write(wxString()<<x)
 #else
-	#define __LOG(x) if (loggerDaniel) loggerDaniel->Write(wxString()<<x)
+//	#define __LOG(x) if (loggerDaniel) loggerDaniel->Write(wxString()<<x)
 #endif
 
 #endif

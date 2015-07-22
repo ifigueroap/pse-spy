@@ -4,7 +4,7 @@
 #include <wx/msgdlg.h>
 #include <iostream>
 #include "Logger.h"
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include "string_conversions.h"
 using namespace std;
 #include "Application.h"
@@ -46,7 +46,7 @@ bool mxApplication::OnInit() {
 	utils = new mxUtils;
         
 	if (argc==3 && wxString(argv[1])=="--logger") new Logger(argv[2]);
-        new LoggerDaniel;
+        Recolector recolector;
         
 	wxFileName f_path = wxGetCwd(); 
 	f_path.MakeAbsolute();

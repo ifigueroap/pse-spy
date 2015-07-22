@@ -8,17 +8,18 @@
 #include <wx/sstream.h>
 #include <wx/string.h>
 #include <wx/uri.h>
+
 using namespace std;
 void Mensajero::recogerDatosLocal(string repositorioPath){
     wxString respuestaServidor;
     fstream repositorio, archivoXML;
-    //repositorio es el archivo .txt que tiene los nombreArchivoXMLs de los archivos XML.
-    //archivoXML es el archivo que se utiliza para escribir y guardar los XML.
+    //repositorio: es el archivo .txt que tiene los nombreArchivoXMLs de los archivos XML LOCAL.
+    //archivoXML: es el archivo que se utiliza para escribir y guardar los XML.
     string nombreArchivoXML,repositorioXML,file,contenidoArchivoXML,aux;
-    //nombreArchivoXML es el nombreArchivoXML del archivo XML
-    //repositorioXML es el path completo con el nombreArchivoXML del repositorio.
-    //file es el path completo del XML en el que se escribe para guardar
-    //contenidoArchivoXML, es el contenidoArchivoXML del archivo XML
+    //nombreArchivoXML: es el nombreArchivoXML del archivo XML
+    //repositorioXML: es el path completo con el nombreArchivoXML del repositorio.
+    //file: es el path completo del XML en el que se escribe para guardar
+    //contenidoArchivoXML: es el contenidoArchivoXML del archivo XML
     
     repositorioXML=repositorioPath+"RepositorioXML.txt"; //Abrir archivo que contiene nombreArchivoXMLs de los XML
     repositorio.open(repositorioXML.c_str());
@@ -41,14 +42,18 @@ void Mensajero::recogerDatosLocal(string repositorioPath){
 //------------------------------------------------------------ Se envía el nombreArchivoXML y el contenidoArchivoXML del archivo.
                     respuestaServidor = Enviar("192.168.10.7","tesis/vistas/RecibeDatos.php","dato="+nombreArchivoXML+","+contenidoArchivoXML);
 //------------------------------------------------------------ respuesta son los "echo"
-//                    remove(file.c_str());
-//                    remove(repositorioXML.c_str());
+                    if(respuestaServidor=="Respuesta"){
+                        remove(file.c_str());
+                    }
                 }else{
                     //NO SE PUDO ABRIR EL ARCHIVO, el repositorio.txt apuntaba a un archivo no existente
                 }
             }
         }
         repositorio.close();
+        if(respuestaServidor=="Respuesta"){
+            remove(repositorioXML.c_str());
+        }
     }
     //Después de perguntar si se abrió o no el repositorio en el cliente
 }
@@ -58,9 +63,10 @@ wxString Mensajero::Enviar(const wxString &ipServidor, const wxString &page, con
    http.SetHeader("Content-type", "application/x-www-form-urlencoded");
    http.SetPostBuffer(parameters);
    http.Connect(ipServidor,80);
-   wxURI uri(ipServidor);
-//   if (uri.HasPath()) wxMessageBox("SI");
-//   else wxMessageBox("NO");
+   wxURI uri("http://"+ipServidor);
+//   wxMessageBox(uri.GetServer());
+   if (uri.IsReference() ) wxMessageBox("SI");
+   else wxMessageBox("NO");
    wxInputStream *http_stream = http.GetInputStream("/"+page);
    if (http.GetError() == wxPROTO_NOERR){
 //       wxMessageBox("A");

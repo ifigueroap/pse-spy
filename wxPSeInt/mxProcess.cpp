@@ -14,7 +14,7 @@
 #include "CommunicationsManager.h"
 #include <iostream>
 #include "Logger.h"
-#include "LoggerDaniel.h"
+#include "Recolector.h"
 #include <wx/msgdlg.h>
 #include <wx/filedlg.h>
 using namespace std;
@@ -136,7 +136,7 @@ bool mxProcess::CheckSyntax(wxString file, wxString extra_args) {
                 
 		for (unsigned int i=0;i<output.GetCount();i++){
 //---------------------------------------------------------------------------------------------------------
-                        loggerDaniel->RegResultSyntax(output.Item(i),_ZZ(source->GetLine(i+1)) );
+                        recolector->RegResultSyntax(output.Item(i),_ZZ(source->GetLine(i+1)) );
 //---------------------------------------------------------------------------------------------------------
 			main_window->RTreeAdd(output[i],1,source);
                 }
@@ -150,7 +150,7 @@ bool mxProcess::CheckSyntax(wxString file, wxString extra_args) {
 		main_window->RTreeAdd(filename+": Sintaxis Correcta",0);
 //------------------------------------------------------------------------------------------
                 if (output.GetCount()==0){
-                    loggerDaniel->RegResultSyntax(_ZZ("NO"),_ZZ(""));
+                    recolector->RegResultSyntax(_ZZ("NO"),_ZZ(""));
                 }
 //------------------------------------------------------------------------------------------
 		if (what==mxPW_CHECK_AND_RUN)
@@ -172,7 +172,7 @@ bool mxProcess::CheckSyntax(wxString file, wxString extra_args) {
 		}
 	}
         if(output.GetCount()!=0){
-            loggerDaniel->RegNumErrorSyntax(output.GetCount());
+            recolector->RegNumErrorSyntax(output.GetCount());
         }
 	if (_avoid_results_tree) source->ClearErrorMarks();
 	return output.GetCount()==0;
@@ -207,7 +207,7 @@ bool mxProcess::Debug(wxString file, bool check_first) {
 	if (check_first) 
 		return CheckSyntax(file);
 	wxString command, tty_command=config->GetTTYCommand();
-        loggerDaniel->closeTagXml();
+        recolector->closeTagXml();
 	if (tty_command.Len()) {
 		command<<tty_command<<_T(" ");
 		command.Replace(_T("$name"),_T("Ejecucion"));
@@ -247,7 +247,7 @@ bool mxProcess::DrawAndEdit(wxString file, bool check_first) {
 	what = check_first?mxPW_CHECK_AND_DRAWEDIT:mxPW_DRAWEDIT;
 	if (check_first) return CheckSyntax(file,GetDrawPreArgs()+"--writepositions \""+source->GetTempFilenamePSD()+"\"");
 	wxString command;
-        loggerDaniel->closeTagXml();
+        recolector->closeTagXml();
 	command<<config->psdraw3_command;
 	command<<" --port="<<comm_manager->GetServerPort()<<" --id="<<source->GetId();
 	if (source->GetReadOnly()) command<<" --noedit";
