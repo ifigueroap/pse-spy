@@ -410,7 +410,7 @@ void Estructurador::terminarTags(){
     colaEv->insertarfin(evento);
     //Se crea la clase mensajero para revisar si existen archivos por enviar al inicio del programa
     Mensajero msj;
-    msj.mostrar(repositorioPath);
+    msj.recogerDatosLocal(repositorioPath);
 }
 
 

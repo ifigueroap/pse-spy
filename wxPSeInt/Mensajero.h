@@ -4,8 +4,8 @@
 #include <wx/string.h>
 class Mensajero {
 public:
-    void mostrar(std::string repositorioPath);
-    wxString wxHTTP_POST(const wxString &server, const wxString &page, const wxString& parameters);
+    void recogerDatosLocal(std::string repositorioPath);
+    wxString Enviar(const wxString &server, const wxString &page, const wxString& parameters);
     Mensajero();
     Mensajero(const Mensajero& orig);
     virtual ~Mensajero();
