@@ -431,10 +431,10 @@ Estructurador::Estructurador() {
     nombreArchivo=getFechaName();
     repositorioPath=path.GetFullPath();
     path.SetName("PseSpy-"+nombreArchivo+".xml");
-    colaEv = new ColaEventos(path.GetFullPath().mb_str());
+    colaEv = new ColaEventos(path.GetFullPath().mb_str());                  //Se crea la cola de ev para el archivo XML
     path.SetName("RepositorioXML.txt");
     colaEv->iniciarTagXml();
-    colaEv->setRepositorioXML(path.GetFullPath().mb_str(),nombreArchivo);    
+    colaEv->setRepositorioXML(path.GetFullPath().mb_str(),nombreArchivo);    //Archivo estandarizado que contiene nombre de los archivos XML
     
 }
 Estructurador::Estructurador(const Estructurador& orig) {

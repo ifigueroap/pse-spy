@@ -38,6 +38,12 @@ public:
 	wxString help_dir;
 	wxString examples_dir;
 	wxString profiles_dir;
+//------------------------------------------------------------------------------------        
+        wxString ip_servidor_registro;
+        wxString url_registro;
+        bool farmer;
+        int tamano_pila;
+//------------------------------------------------------------------------------------
 	wxString proxy;
 	
 	wxString profile;
@@ -59,7 +65,6 @@ public:
 	bool autoclose;
 	bool calltip_helps;
 	bool rt_syntax;
-        bool farmer;
 	bool smart_indent;
 	int font_size;
 	int tabw;

@@ -43,6 +43,16 @@ public:
     void RegFindNext(wxString textoBuscado);
     void RegFindPrev(wxString textoBuscado);
     
+    //Funciones asociadas a los datos capturados en el archivo de configuración
+    void setIpServer(wxString ip);
+    wxString getIpServer();
+    void setUrlServer(wxString url);
+    wxString getUrl();
+    void setNumStack(int num);
+    int getNumStack();
+    void setEstadoSistemaRegistro(bool activado);
+    bool getEstadoSistemaRegistro();
+    
     void closeTagXml();
     bool getVerificarSintaxis();
     Recolector();

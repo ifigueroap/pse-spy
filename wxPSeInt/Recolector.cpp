@@ -11,6 +11,15 @@
 #include <windows.h>
 Recolector *recolector=NULL;
 Estructurador estructuraDatos;
+
+//Datos del archivo de configuración
+wxString ip_server;
+wxString url_registro1;
+bool farmer1;
+int tamano_pila1;
+//----------------------------------
+
+
 wxString finEjecucion;
 int sintaxisCorrecta=0;
 int valor=0;
@@ -181,6 +190,32 @@ void Recolector::RegFindPrev(wxString textoBuscado){
     estructuraDatos.setFindPrev("BuscarAnterior",textoBuscado);
 }
 
+
+//Datos asociados al archivo de configuración
+void Recolector::setIpServer(wxString ip){
+    ip_server=ip;
+}
+wxString Recolector::getIpServer(){
+    return ip_server;
+}
+void Recolector::setUrlServer(wxString url){
+    url_registro1=url;
+}
+wxString Recolector::getUrl(){
+    return url_registro1;
+}
+void Recolector::setNumStack(int num){
+    tamano_pila1=num;
+}
+int Recolector::getNumStack(){
+    return tamano_pila1;
+}
+void Recolector::setEstadoSistemaRegistro(bool activado){
+    farmer1=activado;
+}
+bool Recolector::getEstadoSistemaRegistro(){
+    return farmer1;
+}
 
 //Funcion para cerrar tag XML "sin errores fuera de ejecucion"
 void Recolector::closeTagXml(){

@@ -29,3 +29,5 @@
 
 # Netbeans project
 nbproject
+/Ejercicios/build/
+/Ejercicios/dist/

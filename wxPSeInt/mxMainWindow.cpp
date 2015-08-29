@@ -129,6 +129,7 @@ BEGIN_EVENT_TABLE(mxMainWindow, wxFrame)
 	EVT_MENU(mxID_CONFIG_SHAPE_COLORS, mxMainWindow::OnConfigShowShapeColors)
 	EVT_MENU(mxID_CONFIG_HIGHLIGHT_BLOCKS, mxMainWindow::OnConfigHighlightBlocks)
 	EVT_MENU(mxID_CONFIG_AUTOCLOSE, mxMainWindow::OnConfigAutoClose)
+        EVT_MENU(mxID_CONFIG_FARMER, mxMainWindow::OnConfigFarmer)
 	EVT_MENU(mxID_CONFIG_AUTOCOMP, mxMainWindow::OnConfigAutoComp)
 	EVT_MENU(mxID_CONFIG_CALLTIP_HELPS, mxMainWindow::OnConfigCalltipHelps)
 	EVT_MENU(mxID_CONFIG_SHOW_QUICKHELP, mxMainWindow::OnConfigShowQuickHelp)
@@ -238,6 +239,7 @@ mxMainWindow::~mxMainWindow() {
 	aui_manager.UnInit();
 	if (logger) delete logger;
         recolector->closeTagXml();
+        
 }
 
 void mxMainWindow::CreateMenus() {
@@ -306,7 +308,7 @@ void mxMainWindow::CreateMenus() {
 	mi_calltip_helps = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_CALLTIP_HELPS, _Z("Utilizar Ayudas Emergentes"),"",config->calltip_helps);
 	mi_smart_indent = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SMART_INDENT, _Z("Utilizar Indentado Inteligente"),"",config->smart_indent);
 //	mi_rt_syntax = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_RT_SYNTAX, _Z("Comprobar Sintaxis Mientras Escribe"),"",config->rt_syntax);
-        mi_farmer=utils->AddCheckToMenu(cfg_help,mxID_HELP_FARMER, _Z("Activar recolector de datos"),"",config->farmer);
+        mi_farmer=utils->AddCheckToMenu(cfg_help,mxID_CONFIG_FARMER, _Z("Activar recolector de datos"),"",config->farmer);
 //        mi_quickhelp = utils->AddCheckToMenu(cfg_help,mxID_CONFIG_SHOW_QUICKHELP, _Z("Mostrar Ayuda Rapida"),"",config->auto_quickhelp);
 	
         cfg->AppendSubMenu(cfg_help,_Z("Asistencias"));
@@ -1258,17 +1260,21 @@ void mxMainWindow::OnConfigAutoComp(wxCommandEvent &evt) {
 		config->autocomp=true;
 	}
 }
-void mxMainWindow::OnConfigFarmer(wxCommandEvent &evt) {
+
+void mxMainWindow::OnConfigFarmer(wxCommandEvent &evt){
     ColaEventos ev;
 	if (!mi_farmer->IsChecked()) {
-		mi_farmer->Check(false);
-		config->farmer=false;
-                ev.setActivar(false);
-                wxMessageBox("A");
+            mi_farmer->Check(false);
+            config->farmer=false;
+            recolector->setEstadoSistemaRegistro(false);
+            ev.setActivar(false);
 	} else {
-		mi_farmer->Check(true);
-		config->farmer=true;
-                wxMessageBox("B");
+            mi_farmer->Check(true);
+            config->farmer=true;
+            recolector->setEstadoSistemaRegistro(true);
+            ev.setActivar(true);
+            wxMessageBox("Se ha activado el registro de eventos, las acciones realizadas sobre el editor de texto"
+                    "se registrarán y posteriormente serán almacenadas en un servidor.");
 	}
 }
 
@@ -2093,4 +2099,3 @@ void mxMainWindow::OnSourceClose (mxSource * src) {
 		CloseTestPackage(); aui_manager.Update(); HideQuickHelp(); 
 	}
 }
-

@@ -6,9 +6,9 @@
 #include <wx/msgdlg.h>
 #include "Logger.h"
 #include "string_conversions.h"
+#include "Recolector.h"
 
 ConfigManager *config;
-
 
 ConfigManager::ConfigManager(wxString apath):lang(LS_INIT) {
 	
@@ -44,7 +44,7 @@ ConfigManager::ConfigManager(wxString apath):lang(LS_INIT) {
 void ConfigManager::LoadDefaults() {
 	profile=NO_PROFILE;
 	animate_gui=true;
-	reorganize_for_debug=true;
+	reorganize_for_debug=false;
 	use_colors=true;
 	show_debug_panel = false;
 	maximized = false;
@@ -71,6 +71,7 @@ void ConfigManager::LoadDefaults() {
 	check_for_updates = false;
 	fixed_port = false;
 	rt_syntax = false;
+        tamano_pila=5;
         farmer = true;
 	smart_indent = false;
 	last_dir=wxFileName::GetHomeDir();
@@ -95,6 +96,8 @@ void ConfigManager::LoadDefaults() {
 	proxy = "";
 	profiles_dir = "perfiles";
 	examples_dir = "ejemplos";
+        ip_servidor_registro="0.0.0.0";
+        url_registro="SinUrl";
 	temp_dir = home_dir;
 	if (!wxFileName::DirExists(temp_dir))
 		wxFileName::Mkdir(temp_dir);
@@ -122,6 +125,12 @@ void ConfigManager::Save() {
 	fil.AddLine(wxString("help_dir=")<<help_dir);
 	fil.AddLine(wxString("proxy=")<<proxy);
 	fil.AddLine(wxString("profiles_dir=")<<profiles_dir);
+//------------------------------------------------------------------------------------
+        fil.AddLine(wxString("ip_servidor_registro=")<<ip_servidor_registro);
+        fil.AddLine(wxString("url_registro=")<<url_registro);
+        fil.AddLine(wxString("farmer=")<<(farmer?1:0));
+        fil.AddLine(wxString("tamano_pila=")<<tamano_pila);
+//------------------------------------------------------------------------------------
 	fil.AddLine(wxString("profile=")<<profile);
 	fil.AddLine(wxString("examples_dir=")<<examples_dir);
 	fil.AddLine(wxString("rt_syntax=")<<(rt_syntax?1:0));
@@ -215,6 +224,12 @@ void ConfigManager::Read() {
 			else if (key=="help_dir") help_dir=value;
 			else if (key=="proxy") proxy=value;
 			else if (key=="profiles_dir") profiles_dir=value;
+//---------------------------------------------------------------------------
+                        else if (key=="ip_servidor_registro") {ip_servidor_registro=value;recolector->setIpServer(value);}
+                        else if (key=="url_registro") {url_registro=value;recolector->setUrlServer(value);}
+                        else if (key=="farmer") {farmer=utils->IsTrue(value);recolector->setEstadoSistemaRegistro(farmer);}
+                        else if (key=="tamano_pila"){ value.ToLong(&l); tamano_pila=l;recolector->setNumStack(tamano_pila);}
+//---------------------------------------------------------------------------
 			else if (key=="profile") profile=value;
 			else if (key=="examples_dir") examples_dir=value;
 			else if (key=="last_dir") last_dir=value;
