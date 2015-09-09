@@ -9,8 +9,11 @@
 #include <wx/sstream.h>
 #include <wx/string.h>
 #include <wx/uri.h>
+#include <wx/utils.h> 
 
 using namespace std;
+wxHTTP http;
+bool borrarRepositorioLocal=true;
 void Mensajero::recogerDatosLocal(string repositorioPath){
     wxString respuestaServidor;
     fstream repositorio, archivoXML;
@@ -21,7 +24,7 @@ void Mensajero::recogerDatosLocal(string repositorioPath){
     //repositorioXML: es el path completo con el nombreArchivoXML del repositorio.
     //file: es el path completo del XML en el que se escribe para guardar
     //contenidoArchivoXML: es el contenidoArchivoXML del archivo XML
-    bool borrarRepositorioLocal=true;
+    
     repositorioXML=repositorioPath+"RepositorioXML.txt"; //Abrir archivo que contiene nombreArchivoXMLs de los XML
     repositorio.open(repositorioXML.c_str());
     if(!repositorio.is_open()){                         //No se abrio
@@ -35,17 +38,23 @@ void Mensajero::recogerDatosLocal(string repositorioPath){
                 archivoXML.open(file.c_str());          //Se intenta abrir el archivo
                 if(archivoXML.is_open()){               //Si se abrió correctamente
                     contenidoArchivoXML.clear();
+                    int i=0;
                     while(getline(archivoXML,aux)){     //Se llena un string con el contenidoArchivoXML del archivo
                         contenidoArchivoXML.append(aux);
                         contenidoArchivoXML.append("\n");
+                        i++;
                     }
                     archivoXML.close();
-                    if(recolector->getIpServer()!="0.0.0.0"||recolector->getUrl()=="SinUrl"){
-                        if(recolector->getEstadoSistemaRegistro()){
+                    if(i>5){
+                        if(recolector->getIpServer()!="0.0.0.0" && recolector->getUrl()!="SinUrl"){
+                            if(recolector->getEstadoSistemaRegistro() && borrarRepositorioLocal){
 //------------------------------------------------------------ Se envía el nombreArchivoXML y el contenidoArchivoXML del archivo.
-                            respuestaServidor = Enviar(recolector->getIpServer(),recolector->getUrl(),"dato="+nombreArchivoXML+","+contenidoArchivoXML);
+                                respuestaServidor = Enviar(recolector->getIpServer(),recolector->getUrl(),"dato="+nombreArchivoXML+","+contenidoArchivoXML);
 //------------------------------------------------------------ respuesta son los "echo"
+                            }
                         }
+                    }else{
+                        remove(file.c_str());// No se registraron events, se borra el archivo
                     }
                     if(respuestaServidor=="Respuesta"){
                         remove(file.c_str());
@@ -61,31 +70,28 @@ void Mensajero::recogerDatosLocal(string repositorioPath){
         if(respuestaServidor=="Respuesta"){
             if(borrarRepositorioLocal){
                 remove(repositorioXML.c_str());
+                http.Close();
             }
         }
     }
     //Después de perguntar si se abrió o no el repositorio en el cliente
 }
 wxString Mensajero::Enviar(const wxString &ipServidor, const wxString &page, const wxString& parameters){
-   wxString respuesta = wxEmptyString;
-   wxHTTP http;
+   wxString respuesta;
    http.SetHeader("Content-type", "application/x-www-form-urlencoded");
    http.SetPostBuffer(parameters);
    http.Connect(ipServidor,80);
    wxURI uri("http://"+ipServidor);
-//   wxMessageBox(uri.GetServer());
-   if (uri.IsReference() ) wxMessageBox("SI");
-//   else wxMessageBox("NO");
-   wxInputStream *http_stream = http.GetInputStream("/"+page);
+   if(borrarRepositorioLocal){
+       wxInputStream *http_stream = http.GetInputStream("/"+page);
    if (http.GetError() == wxPROTO_NOERR){
-//       wxMessageBox("A");
       wxStringOutputStream out_stream(&respuesta);
       http_stream->Read(out_stream);
    }else{
-       respuesta = wxEmptyString;
+       respuesta = "NO";
    }
    wxDELETE(http_stream);
-   http.Close();
+   }
    return respuesta;
 }
 

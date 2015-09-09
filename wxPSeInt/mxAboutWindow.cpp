@@ -58,7 +58,6 @@ mxAboutWindow::mxAboutWindow(wxWindow *parent)
 
 void mxAboutWindow::OnCloseButton(wxCommandEvent &event){
 	Hide();
-        wxMessageBox("A");
 }
 
 void mxAboutWindow::OnClose(wxCloseEvent &event){

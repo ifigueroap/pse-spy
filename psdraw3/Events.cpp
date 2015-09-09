@@ -3,6 +3,7 @@
 #include "GLstuff.h"
 #include "Events.h"
 #include "Entity.h"
+#include <wx/msgdlg.h>
 #include "Global.h"
 #include "Comm.h"
 #include "Draw.h"

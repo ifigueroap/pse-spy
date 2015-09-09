@@ -40,7 +40,7 @@ void Estructurador::setOpenFile(wxString nombreArchivo){
             "\t\t\t<Gestionar>\n"
             "\t\t\t\t<NombreAccion>AbrirArchivo</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n"
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n"
             "\t\t\t</Gestionar>\n"
             "\t\t</EventoRegistrado>\n";
     colaEv->insertar(evento);
@@ -54,7 +54,7 @@ void Estructurador::setCloseFile(wxString nombreArchivo){
             "\t\t\t<Gestionar>\n"
             "\t\t\t\t<NombreAccion>CerrarArchivo</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n"
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n"
             "\t\t\t</Gestionar>\n"
             "\t\t</EventoRegistrado>\n";
     colaEv->insertar(evento);
@@ -68,7 +68,7 @@ void Estructurador::setSaveFile(wxString nombreArchivo){
             "\t\t\t<Gestionar>\n"
             "\t\t\t\t<NombreAccion>GuardarArchivo</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n"
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n"
             "\t\t\t</Gestionar>\n"
             "\t\t</EventoRegistrado>\n";
     colaEv->insertar(evento);
@@ -82,7 +82,7 @@ void Estructurador::setSaveFileAs(wxString nombreArchivo){
             "\t\t\t<Gestionar>\n"
             "\t\t\t\t<NombreAccion>GuardarArchivoComo</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n"
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n"
             "\t\t\t</Gestionar>\n"
             "\t\t</EventoRegistrado>\n";
     colaEv->insertar(evento);
@@ -99,7 +99,7 @@ void Estructurador::setRunSource(wxString nombreArchivo){
             "\t\t\t<Procesar>\n"
             "\t\t\t\t<NombreAccion>Ejecutar</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n";
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n";
 }
 void Estructurador::setErrorSintaxis(wxString lineaError,wxString descripcionError,wxString textoError){
     if(lineaError=="NO"){
@@ -139,7 +139,7 @@ void Estructurador::setVeriSyntax(wxString nombreArchivo){
             "\t\t\t<Procesar>\n"
             "\t\t\t\t<NombreAccion>VerificarSintaxis</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n";
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n";
 }
 void Estructurador::setRunStepStep(wxString nombreArchivo){
     evento.clear();
@@ -148,7 +148,7 @@ void Estructurador::setRunStepStep(wxString nombreArchivo){
             "\t\t\t<Procesar>\n"
             "\t\t\t\t<NombreAccion>EjecutarPasoPaso</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n";
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n";
 }
 void Estructurador::setCreateDraw(wxString nombreArchivo){
     evento.clear();
@@ -157,7 +157,7 @@ void Estructurador::setCreateDraw(wxString nombreArchivo){
             "\t\t\t<Procesar>\n"
             "\t\t\t\t<NombreAccion>DibujarDiagrama</NombreAccion>\n"
             "\t\t\t\t<NombreArchivo>"+nombreArchivo+"</NombreArchivo>\n"
-            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\t\t\t\t</CodigoArchivo>\n";
+            "\t\t\t\t<CodigoArchivo>\n"+getCodigo()+"\n\t\t\t\t</CodigoArchivo>\n";
 }
 
 //ACCIONES DEL EDITOR

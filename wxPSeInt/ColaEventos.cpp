@@ -10,21 +10,25 @@ using namespace std;
 int numElementos,tamanoMaxStack;
 queue <string> cola;
 string auxiliar,nombreArchivo,ubicacion;
-bool activado=true;
+bool activado=recolector->getEstadoSistemaRegistro();
 
 void ColaEventos::insertar(wxString elemento){
-    if(getActivar()){
+    setActivar(recolector->getEstadoSistemaRegistro());
         if(numElementos<tamanoMaxStack-1){ //Si el tamaño es menor al requerido, se agrega a la cola
             numElementos++;
-            agregarEventoCola(elemento);
+            if(getActivar()){
+                agregarEventoCola(elemento);
+            }
         }else{
-            agregarEventoCola(elemento);// Si el tamaño es el indicado, se escribe en el archivo(en disco)
-            escribirEnXml();
-            numElementos=0;
+            if(getActivar()){
+                agregarEventoCola(elemento);// Si el tamaño es el indicado, se escribe en el archivo(en disco)
+                escribirEnXml();
+                numElementos=0;
+            }
         }
-    }
 }
 void ColaEventos::agregarEventoCola(wxString elemento){
+    //Poner para obtener valor 
     cola.push(elemento.mb_str());
 }
 
@@ -43,14 +47,14 @@ void ColaEventos::iniciarTagXml(){
     xmlFile<<"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
             "<SecuenciaEventos>"<<endl;
     numElementos=0;
-    
 }
 void ColaEventos::insertarfin(wxString elemento){
-    activado=true;
-    numElementos=tamanoMaxStack+1;
-    insertar(elemento);
-    xmlFile.close();
     tamanoMaxStack=recolector->getNumStack();
+    numElementos=tamanoMaxStack+1;
+    agregarEventoCola(elemento);// Si el tamaño es el indicado, se escribe en el archivo(en disco)
+    escribirEnXml();
+    xmlFile.close();
+    
 //    wxMessageBox("SI");
 }
 void ColaEventos::setRepositorioXML(string repositorio, string nombre){

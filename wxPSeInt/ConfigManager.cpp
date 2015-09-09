@@ -72,7 +72,7 @@ void ConfigManager::LoadDefaults() {
 	fixed_port = false;
 	rt_syntax = false;
         tamano_pila=5;
-        farmer = true;
+        farmer = false;
 	smart_indent = false;
 	last_dir=wxFileName::GetHomeDir();
 #if defined(_WIN32) || defined(__WIN32__)

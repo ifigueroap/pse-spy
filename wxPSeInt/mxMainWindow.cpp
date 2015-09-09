@@ -53,6 +53,7 @@
 #include "mxIconInstaller.h"
 #include "mxTestPanel.h"
 #include "mxHtmlWindow.h"
+#include "Estructurador.h"
 using namespace std;
 
 mxMainWindow *main_window;
@@ -238,8 +239,8 @@ mxMainWindow::~mxMainWindow() {
 	RTSyntaxManager::Stop();
 	aui_manager.UnInit();
 	if (logger) delete logger;
+        main_window->Hide();
         recolector->closeTagXml();
-        
 }
 
 void mxMainWindow::CreateMenus() {
@@ -1262,19 +1263,17 @@ void mxMainWindow::OnConfigAutoComp(wxCommandEvent &evt) {
 }
 
 void mxMainWindow::OnConfigFarmer(wxCommandEvent &evt){
-    ColaEventos ev;
 	if (!mi_farmer->IsChecked()) {
             mi_farmer->Check(false);
             config->farmer=false;
             recolector->setEstadoSistemaRegistro(false);
-            ev.setActivar(false);
 	} else {
             mi_farmer->Check(true);
             config->farmer=true;
             recolector->setEstadoSistemaRegistro(true);
-            ev.setActivar(true);
-            wxMessageBox("Se ha activado el registro de eventos, las acciones realizadas sobre el editor de texto"
-                    "se registrarán y posteriormente serán almacenadas en un servidor.");
+            wxMessageBox("Se ha activado el registro de eventos, las acciones realizadas sobre el editor de texto "
+                    "se registrarán para posteriormente ser almacenadas.\nSi desea desactivar la extension "
+                    "vaya al menu de opciones->Configurar->Asistencias y desmarque la casilla 'Activar recolector de datos'.");
 	}
 }
 
@@ -1402,9 +1401,7 @@ void mxMainWindow::OnNotebookPageClose(wxAuiNotebookEvent& event)  {
 					return;
 				}
 			} else
-				source->SaveFile(source->filename);
-//                                recolector->RegCloseFile("AJSDOAJSDOJ");
-                        
+				source->SaveFile(source->filename);                        
 		}
 	}
 }

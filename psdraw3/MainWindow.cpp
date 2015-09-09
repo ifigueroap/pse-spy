@@ -30,7 +30,6 @@ MainWindow::MainWindow(wxString title):wxFrame(NULL,wxID_ANY,title,wxDefaultPosi
 }
 
 void MainWindow::OnClose (wxCloseEvent & evt) {
-    wxMessageBox("Asd");
 	if (modified) AskForExit(); else evt.Skip();
 }
 
