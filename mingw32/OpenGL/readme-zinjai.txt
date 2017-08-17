@@ -1,0 +1,5 @@
+Este directorio contiene los archivos necesarios para compilar proyectos que utilicen eventualmente FreeGLUT y/o Glew. Los binarios relacionados a glew y freeglut fueron compilados con la versión de que se distribuye con zinjai, a partir de los fuentes originales de las versiones freeglut-3.0.0 y glew-1.13.0.
+
+Se incluyen los binarios para enlazar tanto estática como dinámicamente ambas bibliotecas. Las plantillas de proyecto OpenGL en ZinjaI incluyen la configuración necesaria para utilizar freeglut en modo estático.
+
+El archivo freeglut-copying.txt contiene la licencia original distribuida con el código fuente de la versión de freeglut compilada, y el archivo glew-license.txt la de la versión de glew compilada. Para más información sobre ambos visite http://glew.sourceforge.net/ y http://freeglut.sourceforge.net/.
